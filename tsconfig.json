@@ -1,3 +1,26 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "types": ["react", "react-native", "jest"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "env.d.ts",
+    "*.ts",
+    "*.tsx",
+    "components",
+    "config",
+    "constants",
+    "contexts",
+    "hooks",
+    "screens",
+    "services",
+    "types",
+    "utils",
+    "__tests__"
+  ],
+  "exclude": ["node_modules", "supabase/functions", "backend"]
 }
