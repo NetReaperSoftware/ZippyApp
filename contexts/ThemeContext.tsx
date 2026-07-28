@@ -10,6 +10,9 @@ export interface Theme {
   primary: string;
   primaryVariant: string;
   secondary: string;
+  /// Foreground for content sitting on `primary`. White reads fine on the blue
+  /// themes but not on Classic's neon green, so it varies per theme.
+  onPrimary: string;
   text: string;
   textSecondary: string;
   textMuted: string;
@@ -35,6 +38,7 @@ const lightTheme: Theme = {
   primary: '#4285F4',
   primaryVariant: '#1a73e8',
   secondary: '#34a853',
+  onPrimary: '#ffffff',
   text: '#333333',
   textSecondary: '#666666',
   textMuted: '#999999',
@@ -60,6 +64,7 @@ const darkTheme: Theme = {
   primary: '#4285F4',
   primaryVariant: '#1a73e8',
   secondary: '#34a853',
+  onPrimary: '#ffffff',
   text: '#ffffff',
   textSecondary: '#b3b3b3',
   textMuted: '#808080',
@@ -78,7 +83,39 @@ const darkTheme: Theme = {
   cardBackground: '#1e1e1e',
 };
 
-export type ThemeMode = 'system' | 'light' | 'dark';
+/**
+ * Classic — the neon-green-on-near-black look from the original web demo.
+ * Core values are its Tailwind `zippy.*` tokens and `:root` custom properties;
+ * the state colors come from the Tailwind palette entries that demo used
+ * (emerald/amber/red 500) and the greys from its slate text classes.
+ */
+const classicTheme: Theme = {
+  background: '#050a12', // --zippy-bg
+  surface: '#0d1420', // --zippy-surface
+  surfaceElevated: '#111827', // --zippy-surface-2
+  primary: '#39e639', // --zippy-green
+  primaryVariant: '#2cbd2c', // zippy.green-dark
+  secondary: '#5ff05f', // zippy.green-light
+  onPrimary: '#050a12', // near-black on neon green
+  text: '#e2e8f0', // demo body color
+  textSecondary: '#94a3b8', // slate-400
+  textMuted: '#64748b', // slate-500
+  border: 'rgba(57, 230, 57, 0.15)', // --zippy-border
+  borderLight: 'rgba(255, 255, 255, 0.06)', // --zippy-border-dim
+  success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+  shadow: '#000000',
+  tabBarBackground: '#0d1420',
+  tabBarActive: '#39e639',
+  tabBarInactive: '#64748b',
+  modalBackground: 'rgba(5, 10, 18, 0.8)',
+  inputBackground: '#111827',
+  inputBorder: 'rgba(57, 230, 57, 0.15)',
+  cardBackground: '#0d1420',
+};
+
+export type ThemeMode = 'system' | 'light' | 'dark' | 'classic';
 
 interface ThemeContextType {
   theme: Theme;
@@ -110,8 +147,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     StorageUtils.setItem(StorageKeys.themeMode, mode);
   }, []);
 
-  const isDark = themeMode === 'system' ? systemScheme === 'dark' : themeMode === 'dark';
-  const theme = isDark ? darkTheme : lightTheme;
+  // Classic is a dark theme, so it counts as dark for status-bar styling.
+  const isDark = themeMode === 'system' ? systemScheme === 'dark' : themeMode !== 'light';
+  const theme =
+    themeMode === 'classic' ? classicTheme : isDark ? darkTheme : lightTheme;
 
   return (
     <ThemeContext.Provider value={{ theme, themeMode, isDark, setThemeMode }}>

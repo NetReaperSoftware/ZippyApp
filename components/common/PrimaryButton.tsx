@@ -35,9 +35,9 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         },
       ]}>
       {loading ? (
-        <ActivityIndicator color={isOutline ? theme.primary : '#ffffff'} />
+        <ActivityIndicator color={isOutline ? theme.primary : theme.onPrimary} />
       ) : (
-        <Text style={[styles.label, { color: isOutline ? theme.primary : '#ffffff' }]}>
+        <Text style={[styles.label, { color: isOutline ? theme.primary : theme.onPrimary }]}>
           {title}
         </Text>
       )}

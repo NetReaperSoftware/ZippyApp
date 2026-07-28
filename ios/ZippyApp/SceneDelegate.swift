@@ -23,6 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     let window = UIWindow(windowScene: windowScene)
     self.window = window
+    // React Native reads the window off the app delegate, so keep it in sync.
+    appDelegate.window = window
 
     factory.startReactNative(
       withModuleName: "ZippyApp",

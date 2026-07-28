@@ -5,7 +5,7 @@ import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme, ThemeMode } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 
-const THEME_MODES: ThemeMode[] = ['system', 'light', 'dark'];
+const THEME_MODES: ThemeMode[] = ['system', 'light', 'dark', 'classic'];
 
 const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();
@@ -37,7 +37,10 @@ const SettingsScreen: React.FC = () => {
                     },
                   ]}>
                   <Text
-                    style={[styles.modeLabel, { color: selected ? '#ffffff' : theme.text }]}>
+                    style={[
+                      styles.modeLabel,
+                      { color: selected ? theme.onPrimary : theme.text },
+                    ]}>
                     {mode}
                   </Text>
                 </TouchableOpacity>

@@ -89,9 +89,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           <PrimaryButton title="Sign In" onPress={handleLogin} loading={submitting} />
 
           <View style={styles.footer}>
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-              <Text style={[styles.link, { color: theme.primary }]}>Create an account</Text>
-            </TouchableOpacity>
+            {/* "Create an account" is hidden while Signup is out of the navigator. */}
             <TouchableOpacity onPress={() => navigation.navigate('PasswordReset')}>
               <Text style={[styles.link, { color: theme.textSecondary }]}>Forgot password?</Text>
             </TouchableOpacity>

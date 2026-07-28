@@ -5,6 +5,13 @@ import ReactAppDependencyProvider
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+  /// Owned by SceneDelegate under the UIScene lifecycle, but still declared here:
+  /// React Native reaches for `RCTSharedApplication().delegate.window` in its utils
+  /// and dev-support code. `window` is only an optional requirement of
+  /// UIApplicationDelegate, so omitting it compiles and then crashes at runtime with
+  /// "-[AppDelegate window]: unrecognized selector".
+  var window: UIWindow?
+
   var reactNativeDelegate: ReactNativeDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
 

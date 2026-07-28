@@ -11,17 +11,26 @@ import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Screens
+// SignupScreen and HomeScreen still exist but are not registered below.
 import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
-import SignupScreen from './screens/SignupScreen';
 import PasswordResetScreen from './screens/PasswordResetScreen';
-import HomeScreen from './screens/HomeScreen';
+import DashboardScreen from './screens/DashboardScreen';
+import MessagesScreen from './screens/MessagesScreen';
+import ContactsScreen from './screens/ContactsScreen';
+import AppointmentsScreen from './screens/AppointmentsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 import type { RootStackParamList, MainTabParamList } from './types/Navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+// Temporary, for building out the in-app UI: boot straight into the tab
+// navigator instead of the Splash/Login flow. Set back to false to restore the
+// auth gate. Screens still read `useAuth()`, which returns a null user here, so
+// anything user-specific renders its signed-out fallback.
+const SKIP_AUTH_FOR_UI_DEV = true;
 
 // Deep link configuration
 const linking = {
@@ -30,13 +39,15 @@ const linking = {
     screens: {
       PasswordReset: 'reset-password',
       Login: 'login',
-      Signup: 'signup',
     },
   },
 };
 
 const TAB_ICONS: Record<keyof MainTabParamList, string> = {
-  Home: 'home',
+  Dashboard: 'grid',
+  Messages: 'chatbubbles',
+  Contacts: 'people',
+  Appointments: 'calendar',
   Settings: 'settings',
 };
 
@@ -64,7 +75,10 @@ function MainTabNavigator(): React.JSX.Element {
           borderTopColor: theme.border,
         },
       })}>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen name="Messages" component={MessagesScreen} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} />
+      <Tab.Screen name="Appointments" component={AppointmentsScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
@@ -81,14 +95,13 @@ function RootNavigator(): React.JSX.Element {
         backgroundColor={theme.background}
       />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {loading ? (
+        {loading && !SKIP_AUTH_FOR_UI_DEV ? (
           <Stack.Screen name="Splash" component={SplashScreen} />
-        ) : user ? (
+        ) : user || SKIP_AUTH_FOR_UI_DEV ? (
           <Stack.Screen name="MainTabs" component={MainTabNavigator} />
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Signup" component={SignupScreen} />
             <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
           </>
         )}
