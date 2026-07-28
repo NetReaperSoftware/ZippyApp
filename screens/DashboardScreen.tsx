@@ -1,9 +1,8 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import { useTheme } from '../contexts/ThemeContext';
-import { useAuth } from '../contexts/AuthContext';
 
 // Placeholder figures so the layout is visible while the UI is built out.
 const STATS = [
@@ -22,19 +21,30 @@ const ACTIVITY = [
 
 const DashboardScreen: React.FC = () => {
   const { theme } = useTheme();
-  const { user } = useAuth();
-  const displayName = user?.user_metadata?.name ?? user?.email ?? 'there';
 
   return (
     <ScreenContainer>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Text style={[styles.greeting, { color: theme.text }]}>Hi, {displayName}</Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-            Here's what's happening today
-          </Text>
-        </View>
+      <View style={[styles.appBar, { borderBottomColor: theme.borderLight }]}>
+        <TouchableOpacity
+          style={[styles.appBarButton, styles.appBarLeft]}
+          accessibilityRole="button"
+          accessibilityLabel="Profile"
+          hitSlop={8}>
+          <Ionicons name="person-circle-outline" size={28} color={theme.text} />
+        </TouchableOpacity>
 
+        <Text style={[styles.appBarTitle, { color: theme.text }]}>MyZippy</Text>
+
+        <TouchableOpacity
+          style={[styles.appBarButton, styles.appBarRight]}
+          accessibilityRole="button"
+          accessibilityLabel="Notifications"
+          hitSlop={8}>
+          <Ionicons name="notifications-outline" size={25} color={theme.text} />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.statGrid}>
           {STATS.map(stat => (
             <View
@@ -86,19 +96,34 @@ const DashboardScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  appBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    height: 52,
+    borderBottomWidth: 1,
+  },
+  // Equal fixed widths on both sides keep the title optically centered
+  // regardless of the icons' intrinsic sizes.
+  appBarButton: {
+    width: 44,
+    justifyContent: 'center',
+  },
+  appBarLeft: {
+    alignItems: 'flex-start',
+  },
+  appBarRight: {
+    alignItems: 'flex-end',
+  },
+  appBarTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 17,
+    fontWeight: '700',
+  },
   content: {
     padding: 20,
     gap: 20,
-  },
-  header: {
-    gap: 4,
-  },
-  greeting: {
-    fontSize: 26,
-    fontWeight: '700',
-  },
-  subtitle: {
-    fontSize: 15,
   },
   statGrid: {
     flexDirection: 'row',
