@@ -18,5 +18,15 @@
     "utils",
     "__tests__"
   ],
-  "exclude": ["node_modules", "supabase/functions", "backend"]
+  "exclude": [
+    "node_modules",
+    "supabase/functions",
+    "backend",
+    "dist-web",
+    // Web-only sources need DOM/Vite globals the native app must not have.
+    // They are type-checked by tsconfig.web.json instead.
+    "vite.config.ts",
+    "index.web.tsx",
+    "web"
+  ]
 }

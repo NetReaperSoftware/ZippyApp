@@ -80,3 +80,6 @@ yarn-error.log
 
 # Local agent config
 .claude
+
+# Web demo build output
+dist-web/

@@ -1,0 +1,51 @@
+name: Deploy web demo
+
+# Manual-only for now. Add a `push:` trigger once you've confirmed the demo
+# looks right and decided this is the host you want.
+on:
+  workflow_dispatch:
+
+# Required by actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # base must match how the site is served. A GitHub Pages project site
+      # lives at /<repo>/; set VITE_BASE to / for a custom domain or for
+      # Cloudflare/Netlify.
+      - run: npm run build:web
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
