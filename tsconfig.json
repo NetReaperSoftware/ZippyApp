@@ -1,11 +1,7 @@
 {
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
-    "types": ["react", "react-native", "jest"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "types": ["react", "react-native", "jest"]
   },
   "include": [
     "env.d.ts",
