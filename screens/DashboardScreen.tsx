@@ -1,64 +1,108 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { NavigationProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
+import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
+import { useActivity, useDashboardStats } from '../hooks';
+import { currency, relativeTime } from '../utils/format';
+import type { DashboardStackParamList, MainTabParamList } from '../types/Navigation';
+import type { ActivityItem } from '../types/Models';
 
-// Placeholder figures so the layout is visible while the UI is built out.
-const STATS = [
-  { key: 'unread', label: 'Unread', value: '12', icon: 'chatbubble-ellipses' },
-  { key: 'today', label: 'Today', value: '4', icon: 'calendar' },
-  { key: 'contacts', label: 'Contacts', value: '318', icon: 'people' },
-  { key: 'followups', label: 'Follow-ups', value: '7', icon: 'flag' },
-];
+type Nav = NativeStackNavigationProp<DashboardStackParamList, 'Dashboard'>;
 
-const ACTIVITY = [
-  { id: '1', title: 'New message from Dana Whitfield', time: '8m ago' },
-  { id: '2', title: 'Appointment confirmed — Marcus Lee', time: '1h ago' },
-  { id: '3', title: 'Contact added — Priya Raman', time: '3h ago' },
-  { id: '4', title: 'Follow-up due — Owen Bright', time: 'Yesterday' },
-];
+const ACTIVITY_ICONS: Record<ActivityItem['kind'], string> = {
+  message: 'chatbubble-ellipses',
+  appointment: 'calendar',
+  lead: 'person-add',
+  missed_call: 'call',
+};
 
 const DashboardScreen: React.FC = () => {
   const { theme } = useTheme();
+  const navigation = useNavigation<Nav>();
+  // Separate handle for jumping to a sibling tab (Leads lives in the More stack).
+  const tabNavigation = useNavigation<NavigationProp<MainTabParamList>>();
+  const { data: stats } = useDashboardStats();
+  const { data: activity } = useActivity();
+
+  const openLeads = () => tabNavigation.navigate('MoreTab', { screen: 'Leads' });
+
+  const secondaryStats = [
+    { key: 'leads', label: 'New leads', value: String(stats.newLeads), onPress: openLeads },
+    { key: 'booked', label: 'Booked', value: String(stats.bookedThisWeek) },
+    { key: 'recovered', label: 'Recovered', value: currency(stats.revenueRecovered) },
+  ];
 
   return (
     <ScreenContainer>
-      <View style={[styles.appBar, { borderBottomColor: theme.borderLight }]}>
-        <TouchableOpacity
-          style={[styles.appBarButton, styles.appBarLeft]}
-          accessibilityRole="button"
-          accessibilityLabel="Profile"
-          hitSlop={8}>
-          <Ionicons name="person-circle-outline" size={28} color={theme.text} />
-        </TouchableOpacity>
-
-        <Text style={[styles.appBarTitle, { color: theme.text }]}>MyZippy</Text>
-
-        <TouchableOpacity
-          style={[styles.appBarButton, styles.appBarRight]}
-          accessibilityRole="button"
-          accessibilityLabel="Notifications"
-          hitSlop={8}>
-          <Ionicons name="notifications-outline" size={25} color={theme.text} />
-        </TouchableOpacity>
-      </View>
+      <AppBar
+        title="MyZippy"
+        left={
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Profile"
+            hitSlop={8}
+            onPress={() => tabNavigation.navigate('MoreTab', { screen: 'Profile' })}>
+            <Ionicons name="person-circle-outline" size={28} color={theme.text} />
+          </TouchableOpacity>
+        }
+        right={
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Notifications"
+            hitSlop={8}
+            onPress={() => navigation.navigate('Notifications')}>
+            <Ionicons name="notifications-outline" size={25} color={theme.text} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.statGrid}>
-          {STATS.map(stat => (
-            <View
+        {/* Hero: the product's core promise, always first. */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('MissedCalls')}
+          style={[
+            styles.hero,
+            { backgroundColor: theme.cardBackground, borderColor: theme.primary },
+          ]}>
+          <View style={[styles.heroIcon, { backgroundColor: theme.primary }]}>
+            <Ionicons name="call" size={20} color={theme.onPrimary} />
+          </View>
+
+          <View style={styles.heroBody}>
+            <Text style={[styles.heroTitle, { color: theme.text }]}>
+              {stats.missedCallsToday} missed{' '}
+              {stats.missedCallsToday === 1 ? 'call' : 'calls'} today
+            </Text>
+            <Text style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
+              {stats.recoveredToday} recovered by auto text-back
+            </Text>
+          </View>
+
+          <Ionicons name="chevron-forward" size={20} color={theme.textMuted} />
+        </TouchableOpacity>
+
+        <View style={styles.statRow}>
+          {secondaryStats.map(stat => (
+            <TouchableOpacity
               key={stat.key}
+              activeOpacity={stat.onPress ? 0.7 : 1}
+              onPress={stat.onPress}
+              disabled={!stat.onPress}
               style={[
                 styles.statCard,
                 { backgroundColor: theme.cardBackground, borderColor: theme.border },
               ]}>
-              <Ionicons name={stat.icon} size={20} color={theme.primary} />
               <Text style={[styles.statValue, { color: theme.text }]}>{stat.value}</Text>
               <Text style={[styles.statLabel, { color: theme.textSecondary }]}>
                 {stat.label}
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -68,25 +112,23 @@ const DashboardScreen: React.FC = () => {
             styles.card,
             { backgroundColor: theme.cardBackground, borderColor: theme.border },
           ]}>
-          {ACTIVITY.map((item, index) => (
+          {activity.map((item, index) => (
             <View
               key={item.id}
               style={[
                 styles.activityRow,
-                index < ACTIVITY.length - 1 && {
+                index < activity.length - 1 && {
                   borderBottomWidth: 1,
                   borderBottomColor: theme.borderLight,
                 },
               ]}>
-              <View style={styles.activityText}>
-                <Text style={[styles.activityTitle, { color: theme.text }]} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={[styles.activityTime, { color: theme.textMuted }]}>
-                  {item.time}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={theme.textMuted} />
+              <Ionicons name={ACTIVITY_ICONS[item.kind]} size={18} color={theme.textMuted} />
+              <Text style={[styles.activityTitle, { color: theme.text }]} numberOfLines={1}>
+                {item.title}
+              </Text>
+              <Text style={[styles.activityTime, { color: theme.textMuted }]}>
+                {relativeTime(item.occurredAt)}
+              </Text>
             </View>
           ))}
         </View>
@@ -96,54 +138,53 @@ const DashboardScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  appBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    height: 52,
-    borderBottomWidth: 1,
-  },
-  // Equal fixed widths on both sides keep the title optically centered
-  // regardless of the icons' intrinsic sizes.
-  appBarButton: {
-    width: 44,
-    justifyContent: 'center',
-  },
-  appBarLeft: {
-    alignItems: 'flex-start',
-  },
-  appBarRight: {
-    alignItems: 'flex-end',
-  },
-  appBarTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '700',
-  },
   content: {
     padding: 20,
     gap: 20,
   },
-  statGrid: {
+  hero: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  statCard: {
-    flexGrow: 1,
-    flexBasis: '45%',
+    alignItems: 'center',
+    gap: 14,
     borderRadius: 16,
     borderWidth: 1,
     padding: 16,
-    gap: 6,
+  },
+  heroIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroBody: {
+    flex: 1,
+    gap: 3,
+  },
+  heroTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  heroSubtitle: {
+    fontSize: 13,
+  },
+  statRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    gap: 4,
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: 12,
   },
   sectionTitle: {
     fontSize: 18,
@@ -160,11 +201,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 12,
   },
-  activityText: {
-    flex: 1,
-    gap: 2,
-  },
   activityTitle: {
+    flex: 1,
     fontSize: 15,
     fontWeight: '500',
   },

@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { supabase } from '../supabaseClient';
 import type { User, Session } from '@supabase/supabase-js';
+import type { UserRole } from '../types/Models';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  /** Gates the admin/rep area. Read from user metadata; defaults to 'owner'. */
+  role: UserRole;
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -21,6 +24,12 @@ export const useAuth = () => {
   }
   return context;
 };
+
+/**
+ * Forces a role while the app runs without a signed-in user. Set to null to use
+ * the real value from user metadata. Pairs with SKIP_AUTH_FOR_UI_DEV in App.tsx.
+ */
+const DEV_ROLE_OVERRIDE: UserRole | null = 'admin';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -85,8 +94,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return { error };
   }, []);
 
+  const role: UserRole =
+    DEV_ROLE_OVERRIDE ?? ((user?.user_metadata?.role as UserRole | undefined) ?? 'owner');
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut, resetPassword }}>
+    <AuthContext.Provider
+      value={{ user, session, loading, role, signUp, signIn, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
