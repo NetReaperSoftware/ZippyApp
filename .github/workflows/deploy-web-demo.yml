@@ -1,8 +1,10 @@
 name: Deploy web demo
 
-# Manual-only for now. Add a `push:` trigger once you've confirmed the demo
-# looks right and decided this is the host you want.
 on:
+  # Republish the demo whenever main moves.
+  push:
+    branches: [main]
+  # Keep the manual trigger for redeploying without a code change.
   workflow_dispatch:
 
 # Required by actions/deploy-pages.
@@ -20,11 +22,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
@@ -36,7 +38,7 @@ jobs:
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist-web
 
@@ -48,4 +50,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
