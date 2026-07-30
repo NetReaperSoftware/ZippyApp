@@ -1,6 +1,6 @@
 # ZippyApp
 
-React Native 0.79.2 app (TypeScript), structured to mirror the FitSync project layout.
+React Native 0.79.2 app (TypeScript), structured to mirror the base project layout.
 
 ## Setup
 
