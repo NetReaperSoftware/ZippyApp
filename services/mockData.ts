@@ -23,6 +23,14 @@ import type {
 const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
 const hoursFromNow = (h: number) => new Date(Date.now() + h * 3_600_000).toISOString();
 
+/** Fixed clock time on a day offset from today — keeps the month grid populated. */
+const dayAt = (dayOffset: number, hour: number, minute = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + dayOffset);
+  d.setHours(hour, minute, 0, 0);
+  return d.toISOString();
+};
+
 export const mockDashboardStats: DashboardStats = {
   missedCallsToday: 3,
   recoveredToday: 2,
@@ -274,6 +282,61 @@ export const mockAppointments: Appointment[] = [
     durationMinutes: 30,
     location: 'Video',
     status: 'pending',
+  },
+  // Spread across the month so the calendar grid shows activity on other days.
+  {
+    id: 'a6',
+    title: 'Estimate walkthrough',
+    contactName: 'Sofia Alvarez',
+    startsAt: dayAt(3, 9, 30),
+    durationMinutes: 60,
+    location: '88 Alder Ave',
+    status: 'confirmed',
+  },
+  {
+    id: 'a7',
+    title: 'Callback',
+    contactName: 'Owen Bright',
+    startsAt: dayAt(3, 14),
+    durationMinutes: 15,
+    location: 'Phone',
+    status: 'pending',
+  },
+  {
+    id: 'a8',
+    title: 'Annual service',
+    contactName: 'Marcus Lee',
+    startsAt: dayAt(6, 11),
+    durationMinutes: 90,
+    location: '412 Cedar St',
+    status: 'confirmed',
+  },
+  {
+    id: 'a9',
+    title: 'New client intro',
+    contactName: 'Nina Kowalski',
+    startsAt: dayAt(-2, 10),
+    durationMinutes: 30,
+    location: 'Video',
+    status: 'confirmed',
+  },
+  {
+    id: 'a10',
+    title: 'Follow-up visit',
+    contactName: 'Dana Whitfield',
+    startsAt: dayAt(9, 15, 30),
+    durationMinutes: 45,
+    location: 'Office',
+    status: 'pending',
+  },
+  {
+    id: 'a11',
+    title: 'Quarterly review',
+    contactName: 'Priya Raman',
+    startsAt: dayAt(-5, 13),
+    durationMinutes: 60,
+    location: 'Video',
+    status: 'cancelled',
   },
 ];
 

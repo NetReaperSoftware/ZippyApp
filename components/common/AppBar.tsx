@@ -9,15 +9,26 @@ interface AppBarProps {
   onBack?: () => void;
   left?: ReactNode;
   right?: ReactNode;
+  /**
+   * Width applied to *both* side slots. Widen it when a slot holds more than one
+   * control — applying it to one side only would push the title off centre.
+   */
+  slotWidth?: number;
 }
 
 /**
  * Fixed top bar: optional left control, centred title, optional right control.
  *
- * Both side slots are a fixed width so the title stays optically centred
+ * Both side slots are a fixed, equal width so the title stays optically centred
  * regardless of what the icons are — don't swap them for intrinsic sizing.
  */
-const AppBar: React.FC<AppBarProps> = ({ title, onBack, left, right }) => {
+const AppBar: React.FC<AppBarProps> = ({
+  title,
+  onBack,
+  left,
+  right,
+  slotWidth = 44,
+}) => {
   const { theme } = useTheme();
 
   const leftContent =
@@ -34,11 +45,11 @@ const AppBar: React.FC<AppBarProps> = ({ title, onBack, left, right }) => {
 
   return (
     <View style={[styles.bar, { borderBottomColor: theme.borderLight }]}>
-      <View style={[styles.slot, styles.slotLeft]}>{leftContent}</View>
+      <View style={[styles.slot, styles.slotLeft, { width: slotWidth }]}>{leftContent}</View>
       <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>
         {title}
       </Text>
-      <View style={[styles.slot, styles.slotRight]}>{right}</View>
+      <View style={[styles.slot, styles.slotRight, { width: slotWidth }]}>{right}</View>
     </View>
   );
 };
@@ -52,7 +63,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   slot: {
-    width: 44,
     justifyContent: 'center',
   },
   slotLeft: {
