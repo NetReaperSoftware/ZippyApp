@@ -117,6 +117,12 @@ const classicTheme: Theme = {
 
 export type ThemeMode = 'system' | 'light' | 'dark' | 'classic';
 
+/**
+ * Theme used before any stored preference is read, and when none is saved.
+ * Classic is the MyZippy brand look, so it is what a new install should show.
+ */
+export const DEFAULT_THEME_MODE: ThemeMode = 'classic';
+
 interface ThemeContextType {
   theme: Theme;
   themeMode: ThemeMode;
@@ -136,10 +142,14 @@ export const useTheme = () => {
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const systemScheme = useColorScheme();
-  const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
+  // Both the initial value and the storage fallback use the same default, so the
+  // first paint matches what loads a tick later and the theme doesn't flash.
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(DEFAULT_THEME_MODE);
 
   useEffect(() => {
-    StorageUtils.getItem<ThemeMode>(StorageKeys.themeMode, 'system').then(setThemeModeState);
+    StorageUtils.getItem<ThemeMode>(StorageKeys.themeMode, DEFAULT_THEME_MODE).then(
+      setThemeModeState,
+    );
   }, []);
 
   const setThemeMode = useCallback((mode: ThemeMode) => {

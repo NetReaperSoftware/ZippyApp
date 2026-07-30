@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>MyZippy — Never miss a call, client, or dollar again</title>
+    <meta
+      name="description"
+      content="MyZippy is an AI-powered revenue recovery system for small business owners. Missed-call text-back, AI follow-up, and booking in one app."
+    />
+    <meta property="og:title" content="MyZippy — Never miss a call, client, or dollar again" />
+    <meta
+      property="og:description"
+      content="Try the MyZippy demo — missed-call recovery, AI follow-up, and booking for small business."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://myzippy.app/landing/" />
+    <style>
+      /* Standalone page — deliberately no bundler dependency, so it loads
+         instantly and cannot break when the app bundle changes. Palette matches
+         the app's Classic theme. */
+      :root {
+        --green: #39e639;
+        --green-dark: #2cbd2c;
+        --bg: #050a12;
+        --surface: #0d1420;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --border: rgba(57, 230, 57, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        padding: 32px 24px;
+        background: radial-gradient(
+            circle at 50% 0%,
+            rgba(57, 230, 57, 0.08),
+            transparent 60%
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .mark {
+        width: 62px;
+        height: 62px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        background: var(--green);
+        color: var(--bg);
+        font-size: 30px;
+        font-weight: 800;
+        box-shadow: 0 0 32px rgba(57, 230, 57, 0.4);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 6vw, 44px);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        max-width: 16ch;
+      }
+
+      .accent {
+        color: var(--green);
+        text-shadow: 0 0 24px rgba(57, 230, 57, 0.45);
+      }
+
+      p.sub {
+        margin: 0;
+        font-size: clamp(15px, 2.4vw, 18px);
+        line-height: 1.6;
+        color: var(--muted);
+        max-width: 46ch;
+      }
+
+      .cta {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 16px 34px;
+        border-radius: 999px;
+        background: var(--green);
+        color: var(--bg);
+        font-size: 17px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 0 28px rgba(57, 230, 57, 0.35);
+        transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .cta:hover,
+      .cta:focus-visible {
+        background: var(--green-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 0 40px rgba(57, 230, 57, 0.5);
+      }
+
+      .cta:active {
+        transform: translateY(0);
+      }
+
+      ul.points {
+        list-style: none;
+        margin: 4px 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 22px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      ul.points li::before {
+        content: '✓';
+        color: var(--green);
+        margin-right: 7px;
+        font-weight: 700;
+      }
+
+      footer {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cta {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mark" aria-hidden="true">Z</div>
+
+    <h1>Never miss a call, client,<br /><span class="accent">or dollar again</span></h1>
+
+    <p class="sub">
+      MyZippy answers missed calls instantly, follows up with leads using AI, and books the
+      appointment — while you're on the job.
+    </p>
+
+    <a class="cta" href="/free14daytrial/">Click to try app</a>
+
+    <ul class="points">
+      <li>Missed-call text-back</li>
+      <li>AI follow-up</li>
+      <li>Unified inbox</li>
+      <li>Booking calendar</li>
+    </ul>
+
+    <footer>Interactive demo · No signup required</footer>
+  </body>
+</html>

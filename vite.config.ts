@@ -45,8 +45,12 @@ function reactNativeJsxInNodeModules(): Plugin {
 
 /**
  * GitHub Pages serves static files with no rewrite rules, so refreshing on a
- * sub-route returns its 404 page. Shipping a copy of index.html as 404.html
- * makes Pages hand every unknown path back to the SPA, which then routes it.
+ * sub-route returns its 404 page. Shipping the app's HTML as 404.html makes
+ * Pages hand unknown paths to the SPA, which then routes them client-side.
+ *
+ * The app shell is used rather than the root redirect so that deep links into
+ * the demo survive a refresh. A genuinely mistyped URL therefore lands on the
+ * app rather than an error page — an acceptable trade for a demo site.
  *
  * Harmless on hosts that do their own SPA rewrites (Cloudflare, Netlify).
  */
@@ -56,9 +60,9 @@ function githubPagesSpaFallback(): Plugin {
     apply: 'build',
     closeBundle() {
       const outDir = path.resolve(__dirname, 'dist-web');
-      const index = path.join(outDir, 'index.html');
-      if (fs.existsSync(index)) {
-        fs.copyFileSync(index, path.join(outDir, '404.html'));
+      const appHtml = path.join(outDir, 'free14daytrial', 'index.html');
+      if (fs.existsSync(appHtml)) {
+        fs.copyFileSync(appHtml, path.join(outDir, '404.html'));
       }
     },
   };
@@ -72,10 +76,13 @@ function githubPagesSpaFallback(): Plugin {
  * metro.config.js and ignores this file entirely.
  */
 export default defineConfig(() => ({
-  // GitHub Pages project sites serve from /<repo>/, so assets need that prefix.
-  // Override per host: Cloudflare/Netlify serve from the root and want '/'.
-  //   VITE_BASE=/ npm run build:web
-  base: process.env.VITE_BASE ?? '/ZippyApp/',
+  // Served from the root of the custom domain (myzippy.app), so assets resolve
+  // from '/' and the three pages can link to each other with absolute paths.
+  // Override only if serving from a subpath, e.g. a github.io project site:
+  //   VITE_BASE=/ZippyApp/ npm run build:web
+  // Note that the inter-page links in index.html and landing/index.html are
+  // absolute, so a subpath deploy needs those updated too.
+  base: process.env.VITE_BASE ?? '/',
 
   plugins: [reactNativeJsxInNodeModules(), react(), githubPagesSpaFallback()],
 
@@ -118,5 +125,14 @@ export default defineConfig(() => ({
   build: {
     outDir: 'dist-web',
     emptyOutDir: true,
+    rollupOptions: {
+      // Three pages. Output paths mirror these source paths, so the app lands at
+      // /free14daytrial/ and the landing page at /landing/.
+      input: {
+        root: path.resolve(__dirname, 'index.html'),
+        landing: path.resolve(__dirname, 'landing/index.html'),
+        app: path.resolve(__dirname, 'free14daytrial/index.html'),
+      },
+    },
   },
 }));

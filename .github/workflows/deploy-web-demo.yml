@@ -31,12 +31,10 @@ jobs:
 
       - run: npm ci
 
-      # base must match how the site is served. A GitHub Pages project site
-      # lives at /<repo>/; set VITE_BASE to / for a custom domain or for
-      # Cloudflare/Netlify.
+      # Served from the root of the custom domain (myzippy.app), so the default
+      # base of '/' in vite.config.ts is correct and nothing is overridden here.
+      # public/CNAME travels with the artifact and keeps the domain bound.
       - run: npm run build:web
-        env:
-          VITE_BASE: /${{ github.event.repository.name }}/
 
       - uses: actions/upload-pages-artifact@v5
         with:

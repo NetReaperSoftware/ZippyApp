@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+    />
+    <title>MyZippy — Free 14 Day Trial</title>
+    <meta
+      name="description"
+      content="Try MyZippy free for 14 days. An AI-powered revenue recovery system for small business owners."
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      /* react-native-web maps flex containers onto these; without a full-height
+         root the app collapses to zero height. */
+      #root {
+        display: flex;
+        height: 100%;
+      }
+      #root > * {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.web.tsx"></script>
+  </body>
+</html>
