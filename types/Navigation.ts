@@ -44,6 +44,8 @@ export type MoreStackParamList = {
   LeadDetail: { leadId: string };
   SocialPost: undefined;
   WebsiteRequest: undefined;
+  Broadcasts: undefined;
+  AIConfig: undefined;
   Profile: undefined;
   Settings: undefined;
   AdminDashboard: undefined;

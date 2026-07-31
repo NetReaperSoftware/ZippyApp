@@ -113,6 +113,11 @@ export interface DashboardStats {
   newLeads: number;
   bookedThisWeek: number;
   revenueRecovered: number;
+  /** Totals shown in the dashboard tile grid. */
+  contacts: number;
+  appointments: number;
+  messages: number;
+  aiReplies: number;
 }
 
 export interface ActivityItem {

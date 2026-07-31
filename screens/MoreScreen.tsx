@@ -18,9 +18,11 @@ type Row = {
 };
 
 const BUSINESS_ROWS: Row[] = [
-  { key: 'Leads', label: 'Leads', icon: 'people-outline' },
-  { key: 'SocialPost', label: 'Social Posts', icon: 'megaphone-outline' },
-  { key: 'WebsiteRequest', label: 'Website Requests', icon: 'globe-outline' },
+  { key: 'Leads', label: 'Contacts', icon: 'people-outline' },
+  { key: 'SocialPost', label: 'Social Hub', icon: 'share-social-outline' },
+  { key: 'WebsiteRequest', label: 'AI Website', icon: 'globe-outline' },
+  { key: 'Broadcasts', label: 'Broadcasts', icon: 'megaphone-outline' },
+  { key: 'AIConfig', label: 'AI Configurations', icon: 'options-outline' },
 ];
 
 const ACCOUNT_ROWS: Row[] = [

@@ -37,6 +37,10 @@ export const mockDashboardStats: DashboardStats = {
   newLeads: 12,
   bookedThisWeek: 4,
   revenueRecovered: 2400,
+  contacts: 318,
+  appointments: 17,
+  messages: 25,
+  aiReplies: 12,
 };
 
 export const mockMissedCalls: MissedCall[] = [

@@ -7,34 +7,87 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
-import { useActivity, useDashboardStats } from '../hooks';
-import { currency, relativeTime } from '../utils/format';
+import { useDashboardStats } from '../hooks';
 import type { DashboardStackParamList, MainTabParamList } from '../types/Navigation';
-import type { ActivityItem } from '../types/Models';
 
 type Nav = NativeStackNavigationProp<DashboardStackParamList, 'Dashboard'>;
-
-const ACTIVITY_ICONS: Record<ActivityItem['kind'], string> = {
-  message: 'chatbubble-ellipses',
-  appointment: 'calendar',
-  lead: 'person-add',
-  missed_call: 'call',
-};
 
 const DashboardScreen: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<Nav>();
-  // Separate handle for jumping to a sibling tab (Leads lives in the More stack).
+  // Most features live in sibling tabs, so a tab-level handle is needed too.
   const tabNavigation = useNavigation<NavigationProp<MainTabParamList>>();
   const { data: stats } = useDashboardStats();
-  const { data: activity } = useActivity();
 
-  const openLeads = () => tabNavigation.navigate('MoreTab', { screen: 'Leads' });
+  const tiles = [
+    { key: 'contacts', label: 'Contacts', value: stats.contacts, icon: 'person-outline' },
+    {
+      key: 'appointments',
+      label: 'Appointments',
+      value: stats.appointments,
+      icon: 'calendar-outline',
+    },
+    { key: 'messages', label: 'Messages', value: stats.messages, icon: 'chatbubble-outline' },
+    { key: 'aiReplies', label: 'AI Replies', value: stats.aiReplies, icon: 'sparkles-outline' },
+  ];
 
-  const secondaryStats = [
-    { key: 'leads', label: 'New leads', value: String(stats.newLeads), onPress: openLeads },
-    { key: 'booked', label: 'Booked', value: String(stats.bookedThisWeek) },
-    { key: 'recovered', label: 'Recovered', value: currency(stats.revenueRecovered) },
+  const features = [
+    {
+      key: 'assistant',
+      label: 'AI Assistant',
+      detail: 'Smart tools to grow your business',
+      icon: 'sparkles',
+      go: () => tabNavigation.navigate('ZippyTab', { screen: 'ZippyAssistant' }),
+    },
+    {
+      key: 'textback',
+      label: 'AI Text Back',
+      detail: 'AI replies to missed calls & texts',
+      icon: 'chatbubble-ellipses',
+      go: () => navigation.navigate('MissedCalls'),
+    },
+    {
+      key: 'appointments',
+      label: 'Appointments',
+      detail: 'Booking & schedule management',
+      icon: 'calendar',
+      go: () => tabNavigation.navigate('CalendarTab', { screen: 'Calendar' }),
+    },
+    {
+      key: 'social',
+      label: 'Social Hub',
+      detail: 'Connect across all platforms',
+      icon: 'share-social',
+      go: () => tabNavigation.navigate('MoreTab', { screen: 'SocialPost' }),
+    },
+    {
+      key: 'contacts',
+      label: 'Contacts',
+      detail: 'Customers & lead management',
+      icon: 'people',
+      go: () => tabNavigation.navigate('MoreTab', { screen: 'Leads' }),
+    },
+    {
+      key: 'website',
+      label: 'AI Website',
+      detail: 'AI powered website & hosting',
+      icon: 'globe',
+      go: () => tabNavigation.navigate('MoreTab', { screen: 'WebsiteRequest' }),
+    },
+    {
+      key: 'broadcasts',
+      label: 'Broadcasts',
+      detail: 'SMS, email & voice blasts',
+      icon: 'megaphone',
+      go: () => tabNavigation.navigate('MoreTab', { screen: 'Broadcasts' }),
+    },
+    {
+      key: 'aiconfig',
+      label: 'AI Configurations',
+      detail: 'Run language & behavior setup',
+      icon: 'options',
+      go: () => tabNavigation.navigate('MoreTab', { screen: 'AIConfig' }),
+    },
   ];
 
   return (
@@ -62,7 +115,7 @@ const DashboardScreen: React.FC = () => {
       />
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Hero: the product's core promise, always first. */}
+        {/* Hero: the product's core promise stays above everything else. */}
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => navigation.navigate('MissedCalls')}
@@ -87,49 +140,52 @@ const DashboardScreen: React.FC = () => {
           <Ionicons name="chevron-forward" size={20} color={theme.textMuted} />
         </TouchableOpacity>
 
-        <View style={styles.statRow}>
-          {secondaryStats.map(stat => (
-            <TouchableOpacity
-              key={stat.key}
-              activeOpacity={stat.onPress ? 0.7 : 1}
-              onPress={stat.onPress}
-              disabled={!stat.onPress}
+        <View style={styles.tileGrid}>
+          {tiles.map(tile => (
+            <View
+              key={tile.key}
               style={[
-                styles.statCard,
+                styles.tile,
                 { backgroundColor: theme.cardBackground, borderColor: theme.border },
               ]}>
-              <Text style={[styles.statValue, { color: theme.text }]}>{stat.value}</Text>
-              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>
-                {stat.label}
-              </Text>
-            </TouchableOpacity>
+              <View style={styles.tileTop}>
+                <Ionicons name={tile.icon} size={16} color={theme.primary} />
+                <Text style={[styles.tileLabel, { color: theme.textSecondary }]}>
+                  {tile.label}
+                </Text>
+              </View>
+              <Text style={[styles.tileValue, { color: theme.text }]}>{tile.value}</Text>
+            </View>
           ))}
         </View>
 
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Recent activity</Text>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: theme.cardBackground, borderColor: theme.border },
-          ]}>
-          {activity.map((item, index) => (
-            <View
-              key={item.id}
+        <View style={styles.featureList}>
+          {features.map(feature => (
+            <TouchableOpacity
+              key={feature.key}
+              activeOpacity={0.7}
+              onPress={feature.go}
               style={[
-                styles.activityRow,
-                index < activity.length - 1 && {
-                  borderBottomWidth: 1,
-                  borderBottomColor: theme.borderLight,
-                },
+                styles.featureRow,
+                { backgroundColor: theme.cardBackground, borderColor: theme.border },
               ]}>
-              <Ionicons name={ACTIVITY_ICONS[item.kind]} size={18} color={theme.textMuted} />
-              <Text style={[styles.activityTitle, { color: theme.text }]} numberOfLines={1}>
-                {item.title}
-              </Text>
-              <Text style={[styles.activityTime, { color: theme.textMuted }]}>
-                {relativeTime(item.occurredAt)}
-              </Text>
-            </View>
+              <View style={[styles.featureIcon, { backgroundColor: `${theme.primary}1f` }]}>
+                <Ionicons name={feature.icon} size={18} color={theme.primary} />
+              </View>
+
+              <View style={styles.featureBody}>
+                <Text style={[styles.featureLabel, { color: theme.text }]}>
+                  {feature.label}
+                </Text>
+                <Text
+                  style={[styles.featureDetail, { color: theme.textSecondary }]}
+                  numberOfLines={1}>
+                  {feature.detail}
+                </Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={18} color={theme.textMuted} />
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
@@ -139,8 +195,8 @@ const DashboardScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   content: {
-    padding: 20,
-    gap: 20,
+    padding: 16,
+    gap: 14,
   },
   hero: {
     flexDirection: 'row',
@@ -168,46 +224,60 @@ const styles = StyleSheet.create({
   heroSubtitle: {
     fontSize: 13,
   },
-  statRow: {
+  tileGrid: {
     flexDirection: 'row',
-    gap: 12,
+    flexWrap: 'wrap',
+    gap: 10,
   },
-  statCard: {
-    flex: 1,
-    borderRadius: 16,
+  tile: {
+    flexGrow: 1,
+    flexBasis: '46%',
+    borderRadius: 14,
     borderWidth: 1,
-    padding: 14,
-    gap: 4,
+    padding: 13,
+    gap: 6,
   },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  statLabel: {
-    fontSize: 12,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    paddingHorizontal: 16,
-  },
-  activityRow: {
+  tileTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
+    gap: 6,
+  },
+  tileLabel: {
+    fontSize: 12.5,
+  },
+  tileValue: {
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  featureList: {
+    gap: 9,
+  },
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
   },
-  activityTitle: {
+  featureIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featureBody: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: '500',
+    gap: 2,
   },
-  activityTime: {
-    fontSize: 13,
+  featureLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  featureDetail: {
+    fontSize: 12.5,
   },
 });
 

@@ -39,6 +39,8 @@ import LeadsScreen from './screens/LeadsScreen';
 import LeadDetailScreen from './screens/LeadDetailScreen';
 import SocialPostScreen from './screens/SocialPostScreen';
 import WebsiteRequestScreen from './screens/WebsiteRequestScreen';
+import BroadcastsScreen from './screens/BroadcastsScreen';
+import AIConfigScreen from './screens/AIConfigScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AdminDashboardScreen from './screens/AdminDashboardScreen';
@@ -130,6 +132,8 @@ function MoreStackNavigator(): React.JSX.Element {
       <MoreStack.Screen name="LeadDetail" component={LeadDetailScreen} />
       <MoreStack.Screen name="SocialPost" component={SocialPostScreen} />
       <MoreStack.Screen name="WebsiteRequest" component={WebsiteRequestScreen} />
+      <MoreStack.Screen name="Broadcasts" component={BroadcastsScreen} />
+      <MoreStack.Screen name="AIConfig" component={AIConfigScreen} />
       <MoreStack.Screen name="Profile" component={ProfileScreen} />
       <MoreStack.Screen name="Settings" component={SettingsScreen} />
       {/* Admin routes are not registered at all for owners, so they can't be
