@@ -159,7 +159,7 @@
 
       /* ---------- hero ---------- */
       .hero {
-        padding: 72px 0 56px;
+        padding: 72px 0 0;
         text-align: center;
         background: radial-gradient(
           circle at 50% -10%,
@@ -240,6 +240,43 @@
       .trust span + span::before {
         content: '•';
         margin-right: 16px;
+      }
+
+      /* Mascot + product shot. Height-capped rather than width-capped so the
+         tall portrait art can't dominate the fold on short viewports. */
+      .hero-visual {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+        position: relative;
+      }
+
+      .hero-visual::before {
+        content: '';
+        position: absolute;
+        inset: auto 0 4%;
+        height: 42%;
+        background: radial-gradient(
+          ellipse at 50% 100%,
+          rgba(168, 239, 0, 0.16),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .hero-visual img {
+        position: relative;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 480px;
+        filter: drop-shadow(0 26px 46px rgba(0, 0, 0, 0.55));
+      }
+
+      @media (max-width: 640px) {
+        .hero-visual img {
+          max-height: 380px;
+        }
       }
 
       /* ---------- ticker ---------- */
@@ -561,6 +598,22 @@
           <span>No long-term contract</span>
           <span>Cancel anytime</span>
           <span>Built for small business</span>
+        </div>
+
+        <div class="hero-visual">
+          <picture>
+            <source srcset="/zippy-hero.webp" type="image/webp" />
+            <!-- width/height are set so the browser reserves space and the
+                 hero doesn't jump once the image decodes. -->
+            <img
+              src="/zippy-hero.png"
+              width="723"
+              height="900"
+              alt="Zippy, the MyZippy mascot, holding a phone showing the app dashboard with contacts, appointments, messages and AI replies"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </picture>
         </div>
       </div>
     </header>
