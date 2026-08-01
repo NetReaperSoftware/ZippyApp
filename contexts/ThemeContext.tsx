@@ -29,6 +29,12 @@ export interface Theme {
   inputBackground: string;
   inputBorder: string;
   cardBackground: string;
+  /**
+   * Rotating accent colours for lists that want visual variety — the dashboard
+   * feature icons, for one. Index into it; callers should tolerate any length.
+   * Each theme opens with its own primary so the first item stays on-brand.
+   */
+  accents: string[];
 }
 
 const lightTheme: Theme = {
@@ -55,6 +61,18 @@ const lightTheme: Theme = {
   inputBackground: '#ffffff',
   inputBorder: '#dddddd',
   cardBackground: '#ffffff',
+  // Deeper tones so they hold contrast against a white card.
+  accents: [
+    '#4285F4',
+    '#0891b2',
+    '#059669',
+    '#65a30d',
+    '#d97706',
+    '#ea580c',
+    '#dc2626',
+    '#db2777',
+    '#7c3aed',
+  ],
 };
 
 const darkTheme: Theme = {
@@ -81,6 +99,17 @@ const darkTheme: Theme = {
   inputBackground: '#2d2d2d',
   inputBorder: '#3a3a3a',
   cardBackground: '#1e1e1e',
+  accents: [
+    '#4285F4',
+    '#22d3ee',
+    '#34d399',
+    '#a3e635',
+    '#fbbf24',
+    '#fb923c',
+    '#f87171',
+    '#f472b6',
+    '#c084fc',
+  ],
 };
 
 /**
@@ -113,6 +142,17 @@ const classicTheme: Theme = {
   inputBackground: '#111827',
   inputBorder: 'rgba(57, 230, 57, 0.15)',
   cardBackground: '#0d1420',
+  accents: [
+    '#39e639',
+    '#22d3ee',
+    '#38bdf8',
+    '#a3e635',
+    '#fbbf24',
+    '#fb923c',
+    '#f472b6',
+    '#c084fc',
+    '#5ff05f',
+  ],
 };
 
 /**
@@ -148,6 +188,17 @@ const basicTheme: Theme = {
   inputBackground: '#111812',
   inputBorder: 'rgba(168, 239, 0, 0.14)',
   cardBackground: '#0b100d',
+  accents: [
+    '#a8ef00',
+    '#22d3ee',
+    '#38bdf8',
+    '#34d399',
+    '#fbbf24',
+    '#fb923c',
+    '#f472b6',
+    '#c084fc',
+    '#71b900',
+  ],
 };
 
 export type ThemeMode = 'system' | 'light' | 'dark' | 'classic' | 'basic';

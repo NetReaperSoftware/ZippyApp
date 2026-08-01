@@ -120,6 +120,15 @@ const DashboardScreen: React.FC = () => {
             resizeMode="contain"
             accessibilityLabel="Zippy holding a phone showing the MyZippy app"
           />
+
+          {/* One sentence, three colours — keeps the tagline lively without
+              adding another block of chrome under the artwork. */}
+          <Text style={[styles.tagline, { color: theme.textSecondary }]}>
+            Created for{' '}
+            <Text style={[styles.taglineStrong, { color: theme.primary }]}>ALL</Text>
+            <Text style={{ color: theme.accents[1] ?? theme.primary }}> Service </Text>
+            <Text style={{ color: theme.text }}>Professionals</Text>
+          </Text>
         </View>
 
         {/* Numbers live behind this rather than on the Dashboard, so the feature
@@ -147,7 +156,12 @@ const DashboardScreen: React.FC = () => {
         </TouchableOpacity>
 
         <View style={styles.featureList}>
-          {features.map(feature => (
+          {features.map((feature, index) => {
+            // Cycle through the theme's accents so each row reads distinctly
+            // while staying inside the active palette.
+            const accent = theme.accents[index % theme.accents.length] ?? theme.primary;
+
+            return (
             <TouchableOpacity
               key={feature.key}
               activeOpacity={0.7}
@@ -156,8 +170,8 @@ const DashboardScreen: React.FC = () => {
                 styles.featureRow,
                 { backgroundColor: theme.cardBackground, borderColor: theme.border },
               ]}>
-              <View style={[styles.featureIcon, { backgroundColor: `${theme.primary}1f` }]}>
-                <Ionicons name={feature.icon} size={18} color={theme.primary} />
+              <View style={[styles.featureIcon, { backgroundColor: `${accent}1f` }]}>
+                <Ionicons name={feature.icon} size={18} color={accent} />
               </View>
 
               <View style={styles.featureBody}>
@@ -173,7 +187,8 @@ const DashboardScreen: React.FC = () => {
 
               <Ionicons name="chevron-forward" size={18} color={theme.textMuted} />
             </TouchableOpacity>
-          ))}
+            );
+          })}
         </View>
       </ScrollView>
     </ScreenContainer>
@@ -194,6 +209,17 @@ const styles = StyleSheet.create({
   heroImage: {
     width: '78%',
     height: 210,
+  },
+  tagline: {
+    marginTop: 8,
+    fontSize: 14.5,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    letterSpacing: 0.2,
+  },
+  taglineStrong: {
+    fontWeight: '800',
+    fontStyle: 'italic',
   },
   overview: {
     flexDirection: 'row',
