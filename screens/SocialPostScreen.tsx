@@ -8,10 +8,10 @@ import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
 import { useSocialPosts } from '../hooks';
-import type { MoreStackParamList } from '../types/Navigation';
+import type { FeatureRoutes } from '../types/Navigation';
 import type { SocialPlatform } from '../types/Models';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'SocialPost'>;
+type Nav = NativeStackNavigationProp<FeatureRoutes, 'SocialPost'>;
 
 const PLATFORMS: { key: SocialPlatform; label: string; icon: string }[] = [
   { key: 'facebook', label: 'Facebook', icon: 'logo-facebook' },

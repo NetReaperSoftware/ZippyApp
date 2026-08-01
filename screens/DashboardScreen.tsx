@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { NavigationProp } from '@react-navigation/native';
@@ -9,27 +9,16 @@ import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useDashboardStats } from '../hooks';
 import type { DashboardStackParamList, MainTabParamList } from '../types/Navigation';
+import zippyHero from '../assets/images/zippy-hero.png';
 
 type Nav = NativeStackNavigationProp<DashboardStackParamList, 'Dashboard'>;
 
 const DashboardScreen: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<Nav>();
-  // Most features live in sibling tabs, so a tab-level handle is needed too.
+  // Some features live in sibling tabs, so a tab-level handle is needed too.
   const tabNavigation = useNavigation<NavigationProp<MainTabParamList>>();
   const { data: stats } = useDashboardStats();
-
-  const tiles = [
-    { key: 'contacts', label: 'Contacts', value: stats.contacts, icon: 'person-outline' },
-    {
-      key: 'appointments',
-      label: 'Appointments',
-      value: stats.appointments,
-      icon: 'calendar-outline',
-    },
-    { key: 'messages', label: 'Messages', value: stats.messages, icon: 'chatbubble-outline' },
-    { key: 'aiReplies', label: 'AI Replies', value: stats.aiReplies, icon: 'sparkles-outline' },
-  ];
 
   const features = [
     {
@@ -38,6 +27,13 @@ const DashboardScreen: React.FC = () => {
       detail: 'Smart tools to grow your business',
       icon: 'sparkles',
       go: () => tabNavigation.navigate('ZippyTab', { screen: 'ZippyAssistant' }),
+    },
+    {
+      key: 'chatgpt',
+      label: 'ChatGPT',
+      detail: 'Your AI Content & support',
+      icon: 'color-wand',
+      go: () => tabNavigation.navigate('ZippyTab', { screen: 'ChatGPT' }),
     },
     {
       key: 'textback',
@@ -53,40 +49,42 @@ const DashboardScreen: React.FC = () => {
       icon: 'calendar',
       go: () => tabNavigation.navigate('CalendarTab', { screen: 'Calendar' }),
     },
+    // These push onto the Dashboard's own stack rather than jumping to the More
+    // tab, so Back returns here.
     {
       key: 'social',
       label: 'Social Hub',
       detail: 'Connect across all platforms',
       icon: 'share-social',
-      go: () => tabNavigation.navigate('MoreTab', { screen: 'SocialPost' }),
+      go: () => navigation.navigate('SocialPost'),
     },
     {
       key: 'contacts',
       label: 'Contacts',
       detail: 'Customers & lead management',
       icon: 'people',
-      go: () => tabNavigation.navigate('MoreTab', { screen: 'Leads' }),
+      go: () => navigation.navigate('Leads'),
     },
     {
       key: 'website',
       label: 'AI Website',
       detail: 'AI powered website & hosting',
       icon: 'globe',
-      go: () => tabNavigation.navigate('MoreTab', { screen: 'WebsiteRequest' }),
+      go: () => navigation.navigate('WebsiteRequest'),
     },
     {
       key: 'broadcasts',
       label: 'Broadcasts',
       detail: 'SMS, email & voice blasts',
       icon: 'megaphone',
-      go: () => tabNavigation.navigate('MoreTab', { screen: 'Broadcasts' }),
+      go: () => navigation.navigate('Broadcasts'),
     },
     {
       key: 'aiconfig',
       label: 'AI Configurations',
       detail: 'Run language & behavior setup',
       icon: 'options',
-      go: () => tabNavigation.navigate('MoreTab', { screen: 'AIConfig' }),
+      go: () => navigation.navigate('AIConfig'),
     },
   ];
 
@@ -115,49 +113,38 @@ const DashboardScreen: React.FC = () => {
       />
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Hero: the product's core promise stays above everything else. */}
+        <View style={styles.heroImageWrap}>
+          <Image
+            source={zippyHero}
+            style={styles.heroImage}
+            resizeMode="contain"
+            accessibilityLabel="Zippy holding a phone showing the MyZippy app"
+          />
+        </View>
+
+        {/* Numbers live behind this rather than on the Dashboard, so the feature
+            list stays the focus here. */}
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => navigation.navigate('MissedCalls')}
+          onPress={() => navigation.navigate('Overview')}
           style={[
-            styles.hero,
+            styles.overview,
             { backgroundColor: theme.cardBackground, borderColor: theme.primary },
           ]}>
-          <View style={[styles.heroIcon, { backgroundColor: theme.primary }]}>
-            <Ionicons name="call" size={20} color={theme.onPrimary} />
+          <View style={[styles.overviewIcon, { backgroundColor: theme.primary }]}>
+            <Ionicons name="stats-chart" size={19} color={theme.onPrimary} />
           </View>
 
-          <View style={styles.heroBody}>
-            <Text style={[styles.heroTitle, { color: theme.text }]}>
-              {stats.missedCallsToday} missed{' '}
-              {stats.missedCallsToday === 1 ? 'call' : 'calls'} today
-            </Text>
-            <Text style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
-              {stats.recoveredToday} recovered by auto text-back
+          <View style={styles.overviewBody}>
+            <Text style={[styles.overviewTitle, { color: theme.text }]}>Overview</Text>
+            <Text style={[styles.overviewSubtitle, { color: theme.textSecondary }]}>
+              {stats.missedCallsToday} missed today · {stats.contacts} contacts ·{' '}
+              {stats.appointments} booked
             </Text>
           </View>
 
           <Ionicons name="chevron-forward" size={20} color={theme.textMuted} />
         </TouchableOpacity>
-
-        <View style={styles.tileGrid}>
-          {tiles.map(tile => (
-            <View
-              key={tile.key}
-              style={[
-                styles.tile,
-                { backgroundColor: theme.cardBackground, borderColor: theme.border },
-              ]}>
-              <View style={styles.tileTop}>
-                <Ionicons name={tile.icon} size={16} color={theme.primary} />
-                <Text style={[styles.tileLabel, { color: theme.textSecondary }]}>
-                  {tile.label}
-                </Text>
-              </View>
-              <Text style={[styles.tileValue, { color: theme.text }]}>{tile.value}</Text>
-            </View>
-          ))}
-        </View>
 
         <View style={styles.featureList}>
           {features.map(feature => (
@@ -198,7 +185,17 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 14,
   },
-  hero: {
+  heroImageWrap: {
+    alignItems: 'center',
+    // Negative top margin lets the artwork sit tight under the app bar without
+    // the transparent PNG's padding opening a visible gap.
+    marginTop: -6,
+  },
+  heroImage: {
+    width: '78%',
+    height: 210,
+  },
+  overview: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
@@ -206,48 +203,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 16,
   },
-  heroIcon: {
+  overviewIcon: {
     width: 38,
     height: 38,
     borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroBody: {
+  overviewBody: {
     flex: 1,
     gap: 3,
   },
-  heroTitle: {
+  overviewTitle: {
     fontSize: 16,
     fontWeight: '700',
   },
-  heroSubtitle: {
-    fontSize: 13,
-  },
-  tileGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  tile: {
-    flexGrow: 1,
-    flexBasis: '46%',
-    borderRadius: 14,
-    borderWidth: 1,
-    padding: 13,
-    gap: 6,
-  },
-  tileTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  tileLabel: {
+  overviewSubtitle: {
     fontSize: 12.5,
-  },
-  tileValue: {
-    fontSize: 22,
-    fontWeight: '700',
   },
   featureList: {
     gap: 9,

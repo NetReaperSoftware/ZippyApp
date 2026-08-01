@@ -16,10 +16,10 @@ import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLeads } from '../hooks';
 import { CHANNEL_LABELS, LEAD_STAGE_LABELS, initialsOf } from '../utils/format';
-import type { MoreStackParamList } from '../types/Navigation';
+import type { FeatureRoutes } from '../types/Navigation';
 import type { Lead, LeadStage } from '../types/Models';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'Leads'>;
+type Nav = NativeStackNavigationProp<FeatureRoutes, 'Leads'>;
 type StageFilter = 'all' | LeadStage;
 
 const STAGE_FILTERS: StageFilter[] = ['all', 'new', 'contacted', 'booked', 'won', 'lost'];

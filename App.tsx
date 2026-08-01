@@ -19,6 +19,7 @@ import PasswordResetScreen from './screens/PasswordResetScreen';
 
 // Dashboard tab
 import DashboardScreen from './screens/DashboardScreen';
+import OverviewScreen from './screens/OverviewScreen';
 import MissedCallsScreen from './screens/MissedCallsScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 
@@ -28,6 +29,7 @@ import ConversationScreen from './screens/ConversationScreen';
 
 // Zippy tab
 import ZippyAssistantScreen from './screens/ZippyAssistantScreen';
+import ChatGPTScreen from './screens/ChatGPTScreen';
 
 // Calendar tab
 import CalendarScreen from './screens/CalendarScreen';
@@ -89,8 +91,18 @@ function DashboardStackNavigator(): React.JSX.Element {
   return (
     <DashboardStack.Navigator screenOptions={stackOptions}>
       <DashboardStack.Screen name="Dashboard" component={DashboardScreen} />
+      <DashboardStack.Screen name="Overview" component={OverviewScreen} />
       <DashboardStack.Screen name="MissedCalls" component={MissedCallsScreen} />
       <DashboardStack.Screen name="Notifications" component={NotificationsScreen} />
+      {/* Same feature screens as the More stack. Registering them here keeps a
+          Dashboard shortcut inside the Dashboard's own history, so Back returns
+          to the Dashboard instead of the More tab. */}
+      <DashboardStack.Screen name="Leads" component={LeadsScreen} />
+      <DashboardStack.Screen name="LeadDetail" component={LeadDetailScreen} />
+      <DashboardStack.Screen name="SocialPost" component={SocialPostScreen} />
+      <DashboardStack.Screen name="WebsiteRequest" component={WebsiteRequestScreen} />
+      <DashboardStack.Screen name="Broadcasts" component={BroadcastsScreen} />
+      <DashboardStack.Screen name="AIConfig" component={AIConfigScreen} />
     </DashboardStack.Navigator>
   );
 }
@@ -108,6 +120,7 @@ function ZippyStackNavigator(): React.JSX.Element {
   return (
     <ZippyStack.Navigator screenOptions={stackOptions}>
       <ZippyStack.Screen name="ZippyAssistant" component={ZippyAssistantScreen} />
+      <ZippyStack.Screen name="ChatGPT" component={ChatGPTScreen} />
     </ZippyStack.Navigator>
   );
 }

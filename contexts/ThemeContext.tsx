@@ -115,13 +115,57 @@ const classicTheme: Theme = {
   cardBackground: '#0d1420',
 };
 
-export type ThemeMode = 'system' | 'light' | 'dark' | 'classic';
+/**
+ * Basic — the palette from the myzippy.app marketing site, so the app matches
+ * what visitors see on the web. Core values are that site's design tokens
+ * (`--green`, `--green2`, `--ink`, `--panel`, `--muted`); the state colours are
+ * shared with Classic since the site defines none of its own.
+ *
+ * Note this is a *different* green from Classic: lime `#a8ef00` on `#050705`
+ * rather than Classic's `#39e639` on `#050a12`.
+ */
+const basicTheme: Theme = {
+  background: '#050705', // --ink
+  surface: '#0b100d', // --panel
+  surfaceElevated: '#111812',
+  primary: '#a8ef00', // --green
+  primaryVariant: '#71b900', // --green2
+  secondary: '#71b900',
+  onPrimary: '#050705', // near-black on lime, as the site's buttons render
+  text: '#eef2ec',
+  textSecondary: '#aab4ad', // --muted
+  textMuted: '#6f7a72',
+  border: 'rgba(168, 239, 0, 0.14)',
+  borderLight: 'rgba(255, 255, 255, 0.07)',
+  success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+  shadow: '#000000',
+  tabBarBackground: '#0b100d',
+  tabBarActive: '#a8ef00',
+  tabBarInactive: '#6f7a72',
+  modalBackground: 'rgba(5, 7, 5, 0.82)',
+  inputBackground: '#111812',
+  inputBorder: 'rgba(168, 239, 0, 0.14)',
+  cardBackground: '#0b100d',
+};
+
+export type ThemeMode = 'system' | 'light' | 'dark' | 'classic' | 'basic';
+
+/** Every mode that maps directly to a palette. 'system' picks light or dark. */
+const THEMES: Record<Exclude<ThemeMode, 'system'>, Theme> = {
+  light: lightTheme,
+  dark: darkTheme,
+  classic: classicTheme,
+  basic: basicTheme,
+};
 
 /**
  * Theme used before any stored preference is read, and when none is saved.
- * Classic is the MyZippy brand look, so it is what a new install should show.
+ * Basic matches the myzippy.app site, so the app looks continuous with the web
+ * experience a new user just came from.
  */
-export const DEFAULT_THEME_MODE: ThemeMode = 'classic';
+export const DEFAULT_THEME_MODE: ThemeMode = 'basic';
 
 interface ThemeContextType {
   theme: Theme;
@@ -157,10 +201,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     StorageUtils.setItem(StorageKeys.themeMode, mode);
   }, []);
 
-  // Classic is a dark theme, so it counts as dark for status-bar styling.
+  // Every named theme except 'light' is dark, which drives status-bar styling.
   const isDark = themeMode === 'system' ? systemScheme === 'dark' : themeMode !== 'light';
   const theme =
-    themeMode === 'classic' ? classicTheme : isDark ? darkTheme : lightTheme;
+    themeMode === 'system' ? (isDark ? darkTheme : lightTheme) : THEMES[themeMode];
 
   return (
     <ThemeContext.Provider value={{ theme, themeMode, isDark, setThemeMode }}>

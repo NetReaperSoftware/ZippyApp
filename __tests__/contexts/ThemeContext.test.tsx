@@ -9,7 +9,7 @@ function Probe(): React.JSX.Element {
 }
 
 describe('ThemeContext', () => {
-  it('defaults to Classic mode and exposes its palette', async () => {
+  it('defaults to Basic mode and exposes its palette', async () => {
     render(
       <ThemeProvider>
         <Probe />
@@ -17,11 +17,11 @@ describe('ThemeContext', () => {
     );
 
     // Asserted literally rather than derived from the theme, so an accidental
-    // change to the Classic palette fails here instead of passing silently.
+    // change to the Basic palette fails here instead of passing silently.
     await waitFor(() => {
-      expect(screen.getByTestId('probe')).toHaveTextContent('classic:#39e639');
+      expect(screen.getByTestId('probe')).toHaveTextContent('basic:#a8ef00');
     });
-    expect(DEFAULT_THEME_MODE).toBe('classic');
+    expect(DEFAULT_THEME_MODE).toBe('basic');
   });
 
   it('throws when used outside the provider', () => {

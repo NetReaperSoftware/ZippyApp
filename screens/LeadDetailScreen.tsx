@@ -15,10 +15,10 @@ import {
   initialsOf,
   relativeTime,
 } from '../utils/format';
-import type { MoreStackParamList } from '../types/Navigation';
+import type { FeatureRoutes } from '../types/Navigation';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'LeadDetail'>;
-type Route = RouteProp<MoreStackParamList, 'LeadDetail'>;
+type Nav = NativeStackNavigationProp<FeatureRoutes, 'LeadDetail'>;
+type Route = RouteProp<FeatureRoutes, 'LeadDetail'>;
 
 const LeadDetailScreen: React.FC = () => {
   const { theme } = useTheme();

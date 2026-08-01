@@ -8,10 +8,10 @@ import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
 import { useWebsiteRequests } from '../hooks';
 import { relativeTime } from '../utils/format';
-import type { MoreStackParamList } from '../types/Navigation';
+import type { FeatureRoutes } from '../types/Navigation';
 import type { WebsiteRequest } from '../types/Models';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'WebsiteRequest'>;
+type Nav = NativeStackNavigationProp<FeatureRoutes, 'WebsiteRequest'>;
 
 const STATUS_LABELS: Record<WebsiteRequest['status'], string> = {
   submitted: 'Submitted',

@@ -11,7 +11,7 @@ import type { MoreStackParamList } from '../types/Navigation';
 
 type Nav = NativeStackNavigationProp<MoreStackParamList, 'Settings'>;
 
-const THEME_MODES: ThemeMode[] = ['system', 'light', 'dark', 'classic'];
+const THEME_MODES: ThemeMode[] = ['system', 'light', 'dark', 'classic', 'basic'];
 
 const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();
@@ -96,6 +96,8 @@ const styles = StyleSheet.create({
   },
   modeRow: {
     flexDirection: 'row',
+    // Five modes no longer fit on one line on narrower devices.
+    flexWrap: 'wrap',
     gap: 8,
   },
   modeChip: {

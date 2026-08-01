@@ -7,9 +7,9 @@ import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
-import type { MoreStackParamList } from '../types/Navigation';
+import type { FeatureRoutes } from '../types/Navigation';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'Broadcasts'>;
+type Nav = NativeStackNavigationProp<FeatureRoutes, 'Broadcasts'>;
 type ChannelKey = 'sms' | 'email' | 'voice';
 
 const CHANNELS: { key: ChannelKey; label: string; icon: string }[] = [

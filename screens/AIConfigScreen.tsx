@@ -6,9 +6,9 @@ import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
-import type { MoreStackParamList } from '../types/Navigation';
+import type { FeatureRoutes } from '../types/Navigation';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'AIConfig'>;
+type Nav = NativeStackNavigationProp<FeatureRoutes, 'AIConfig'>;
 
 const TONES = ['Friendly', 'Professional', 'Direct'];
 
