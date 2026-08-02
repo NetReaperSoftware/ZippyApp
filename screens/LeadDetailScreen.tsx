@@ -1,28 +1,20 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRoute, type RouteProp } from '@react-navigation/native';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLeads } from '../hooks';
-import {
-  CHANNEL_LABELS,
-  LEAD_STAGE_LABELS,
-  currency,
-  initialsOf,
-  relativeTime,
-} from '../utils/format';
+import { CHANNEL_LABELS, LEAD_STAGE_LABELS, currency, initialsOf, relativeTime } from '../utils/format';
 import type { FeatureRoutes } from '../types/Navigation';
 
-type Nav = NativeStackNavigationProp<FeatureRoutes, 'LeadDetail'>;
 type Route = RouteProp<FeatureRoutes, 'LeadDetail'>;
 
 const LeadDetailScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { params } = useRoute<Route>();
   const { data: leads } = useLeads();
 
@@ -31,7 +23,7 @@ const LeadDetailScreen: React.FC = () => {
   if (!lead) {
     return (
       <ScreenContainer>
-        <AppBar title="Lead" onBack={() => navigation.goBack()} />
+        <AppBar title="Lead" showBack />
         <Text style={[styles.empty, { color: theme.textMuted }]}>
           This lead is no longer available.
         </Text>
@@ -54,7 +46,7 @@ const LeadDetailScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Lead" onBack={() => navigation.goBack()} />
+      <AppBar title="Lead" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.identity}>

@@ -1,13 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import {
-  ScrollView,
-  SectionList,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -61,7 +53,7 @@ const LeadsScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Leads" onBack={() => navigation.goBack()} />
+      <AppBar title="Leads" showBack />
 
       <View style={styles.header}>
         <View

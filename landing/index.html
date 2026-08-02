@@ -358,6 +358,18 @@
         background: var(--panel);
         padding: 22px;
         transition: border-color 0.15s ease, transform 0.15s ease;
+        /* Cards are <button> so they're keyboard-reachable; undo UA styling. */
+        display: block;
+        width: 100%;
+        text-align: left;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+
+      .card:focus-visible {
+        outline: 2px solid var(--green);
+        outline-offset: 2px;
       }
 
       .card:hover {
@@ -387,6 +399,65 @@
         color: var(--muted);
         font-size: 14px;
         line-height: 1.55;
+      }
+
+      /* ---------- feature showcase ---------- */
+      .card.is-active {
+        border-color: rgba(168, 239, 0, 0.55);
+        background: rgba(168, 239, 0, 0.06);
+      }
+
+      .showcase {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 26px;
+        align-items: center;
+        justify-items: center;
+        margin-top: 34px;
+        padding-top: 30px;
+        border-top: 1px solid var(--line-soft);
+        text-align: center;
+      }
+
+      @media (min-width: 800px) {
+        .showcase {
+          grid-template-columns: auto 1fr;
+          gap: 48px;
+          text-align: left;
+          justify-items: start;
+        }
+      }
+
+      /* Fixed height stops the section jumping as screenshots swap. */
+      .shot {
+        width: 268px;
+        height: 583px;
+        border-radius: 30px;
+        border: 1px solid var(--line-soft);
+        background: var(--panel);
+        object-fit: cover;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(168, 239, 0, 0.08);
+      }
+
+      .showcase-body h3 {
+        margin: 0;
+        font-size: clamp(20px, 3vw, 27px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .showcase-body p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 15.5px;
+        line-height: 1.65;
+        max-width: 48ch;
+      }
+
+      .showcase-hint {
+        margin-top: 18px;
+        font-size: 13px;
+        color: #6f7a72;
       }
 
       /* ---------- founder ---------- */
@@ -637,50 +708,131 @@
         </p>
 
         <div class="grid">
-          <div class="card">
+          <button
+            class="card"
+            type="button"
+            data-feature="assistant"
+            data-shot="/screenshots/AiAssistantScreen.webp"
+            data-title="AI Assistant"
+            data-desc="Ask Zippy to chase unread leads, summarise the calls you missed, draft a reply, or write this week’s promo — in plain English. It works from your real contacts and calendar, so answers are specific to your business rather than generic advice."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">✦</div>
             <h3>AI Assistant</h3>
             <p>Smart AI tools that help grow and manage your business.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="chatgpt"
+            data-shot="/screenshots/ChatGPTScreen.webp"
+            data-title="ChatGPT"
+            data-desc="Pick what you’re making — a social post, a follow-up email, a service description, a review reply — and get copy written in your voice. Start from a suggested prompt or type your own when you already know what you want to say."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">◎</div>
             <h3>ChatGPT</h3>
             <p>AI-powered content creation, ideas and business support.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="textback"
+            data-shot="/screenshots/AiTextBackScreen.webp"
+            data-title="AI Text Back"
+            data-desc="Every missed call gets an instant text so the lead never goes cold. See who called, whether the text-back landed, and who replied — then jump straight into the conversation without leaving the screen."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">↗</div>
             <h3>AI Text Back</h3>
             <p>Instant automated texting for missed calls and new leads.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="appointments"
+            data-shot="/screenshots/CalenderScreen.webp"
+            data-title="Appointments"
+            data-desc="Switch between a month grid and a running list. Tap any day to see exactly what’s booked, with confirmed and pending jobs colour-coded at a glance, then open a booking for the full details."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">▣</div>
             <h3>Appointments</h3>
             <p>Simple booking, scheduling and customer reminders.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="social"
+            data-shot="/screenshots/SocialPostsScreen.webp"
+            data-title="Social Hub"
+            data-desc="Choose Facebook, Instagram, LinkedIn or your Google Business Profile, describe the promo in a line, and get a ready-to-publish post back. Copy it out or export it — no switching between four apps to stay visible."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">◌</div>
             <h3>Social Hub</h3>
             <p>Connect, manage and post across your social platforms.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="contacts"
+            data-shot="/screenshots/ContactsScreen.webp"
+            data-title="Contacts"
+            data-desc="Every lead and customer in one searchable list, grouped alphabetically and filterable by stage — new, contacted, booked, won or lost. Open anyone to see how they found you, what they’re worth, and message them directly."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">☰</div>
             <h3>Contacts</h3>
             <p>Customer profiles, lead tracking and conversation history.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="website"
+            data-shot="/screenshots/WebsiteScreen.webp"
+            data-title="AI Website"
+            data-desc="Need the hours changed or new job photos added? Send the request from your phone and track it through submitted, in progress and complete — no email chains, no waiting on a web developer to call you back."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">⌂</div>
             <h3>AI Website</h3>
             <p>An AI-enhanced website designed to attract and convert.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="broadcasts"
+            data-shot="/screenshots/BroadcastsScreen.webp"
+            data-title="Broadcasts"
+            data-desc="Pick a channel, choose who hears it — everyone, new leads, or past clients — and send. Useful for seasonal reminders, holiday hours, or filling a gap in next week’s schedule."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">✉</div>
             <h3>Broadcasts</h3>
             <p>Send SMS, email and voice messages to your contacts.</p>
-          </div>
-          <div class="card">
+          </button>
+          <button
+            class="card"
+            type="button"
+            data-feature="aiconfig"
+            data-shot="/screenshots/AiConfigScreen.webp"
+            data-title="AI Configuration"
+            data-desc="Set the tone Zippy uses, edit the exact missed-call greeting customers receive, and decide how far it goes on its own — whether it offers booking, replies only after hours, and when it should hand over to you."
+            aria-controls="showcase">
             <div class="icon" aria-hidden="true">⚙</div>
             <h3>AI Configuration</h3>
-            <p>Control Zippy's tone, language and automated behavior.</p>
+            <p>Control Zippy’s tone, language and automated behavior.</p>
+          </button>
+        </div>
+
+        <div class="showcase" id="showcase" aria-live="polite">
+          <img
+            class="shot"
+            id="showcase-shot"
+            src="/screenshots/AiAssistantScreen.webp"
+            width="620"
+            height="1348"
+            alt="AI Assistant screen in the MyZippy app"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="showcase-body">
+            <h3 id="showcase-title">AI Assistant</h3>
+            <p id="showcase-desc">Ask Zippy to chase unread leads, summarise the calls you missed, draft a reply, or write this week’s promo — in plain English. It works from your real contacts and calendar, so answers are specific to your business rather than generic advice.</p>
+            <p class="showcase-hint">Tap any feature above to see it in the app.</p>
           </div>
         </div>
       </div>
@@ -746,5 +898,53 @@
         </div>
       </div>
     </footer>
+
+    <script>
+      // Swaps the showcase screenshot and copy when a feature card is chosen.
+      // The first feature is already rendered server-side, so with JS disabled
+      // the section still shows a real screenshot and description.
+      (function () {
+        var cards = document.querySelectorAll('.card[data-shot]');
+        var shot = document.getElementById('showcase-shot');
+        var title = document.getElementById('showcase-title');
+        var desc = document.getElementById('showcase-desc');
+        if (!cards.length || !shot || !title || !desc) return;
+
+        function select(card) {
+          cards.forEach(function (c) {
+            var active = c === card;
+            c.classList.toggle('is-active', active);
+            c.setAttribute('aria-pressed', String(active));
+          });
+          shot.src = card.dataset.shot;
+          shot.alt = card.dataset.title + ' screen in the MyZippy app';
+          title.textContent = card.dataset.title;
+          desc.textContent = card.dataset.desc;
+        }
+
+        cards.forEach(function (card) {
+          card.setAttribute('aria-pressed', 'false');
+          card.addEventListener('click', function () {
+            select(card);
+            // Only pull the showcase into view when it isn't already visible,
+            // so clicking through features on desktop doesn't yank the page.
+            var box = shot.getBoundingClientRect();
+            if (box.top < 0 || box.bottom > window.innerHeight) {
+              shot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          });
+        });
+
+        select(cards[0]);
+
+        // Warm the remaining screenshots so switching feels instant.
+        window.addEventListener('load', function () {
+          cards.forEach(function (card) {
+            var img = new Image();
+            img.src = card.dataset.shot;
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

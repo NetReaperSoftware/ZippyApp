@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FlatList, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useRoute, type RouteProp } from '@react-navigation/native';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
@@ -21,14 +11,12 @@ import { clockTime } from '../utils/format';
 import type { InboxStackParamList } from '../types/Navigation';
 import type { Message } from '../types/Models';
 
-type Nav = NativeStackNavigationProp<InboxStackParamList, 'Conversation'>;
 type Route = RouteProp<InboxStackParamList, 'Conversation'>;
 
 const QUICK_REPLIES = ["Thanks for reaching out!", "We're open today", 'Can I book you in?'];
 
 const ConversationScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { params } = useRoute<Route>();
   const { data: messages } = useMessages(params.conversationId);
   const [draft, setDraft] = useState('');
@@ -68,7 +56,7 @@ const ConversationScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title={params.contactName} onBack={() => navigation.goBack()} />
+      <AppBar title={params.contactName} showBack />
 
       <KeyboardAvoidingView
         style={styles.flex}

@@ -55,7 +55,7 @@ const OverviewScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Overview" onBack={() => navigation.goBack()} />
+      <AppBar title="Overview" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <TouchableOpacity

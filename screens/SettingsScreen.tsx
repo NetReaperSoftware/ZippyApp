@@ -1,26 +1,21 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme, ThemeMode } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
-import type { MoreStackParamList } from '../types/Navigation';
-
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'Settings'>;
 
 const THEME_MODES: ThemeMode[] = ['system', 'light', 'dark', 'classic', 'basic'];
 
 const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const { user, signOut } = useAuth();
-  const navigation = useNavigation<Nav>();
 
   return (
     <ScreenContainer>
-      <AppBar title="Settings" onBack={() => navigation.goBack()} />
+      <AppBar title="Settings" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View

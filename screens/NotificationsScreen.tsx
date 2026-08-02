@@ -1,24 +1,19 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useNotifications } from '../hooks';
 import { relativeTime } from '../utils/format';
-import type { DashboardStackParamList } from '../types/Navigation';
-
-type Nav = NativeStackNavigationProp<DashboardStackParamList, 'Notifications'>;
 
 const NotificationsScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { data: notifications } = useNotifications();
 
   return (
     <ScreenContainer>
-      <AppBar title="Notifications" onBack={() => navigation.goBack()} />
+      <AppBar title="Notifications" showBack />
 
       <FlatList
         data={notifications}

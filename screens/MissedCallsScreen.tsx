@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import type { NavigationProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
@@ -9,10 +9,8 @@ import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useMissedCalls } from '../hooks';
 import { relativeTime } from '../utils/format';
-import type { DashboardStackParamList, MainTabParamList } from '../types/Navigation';
+import type { MainTabParamList } from '../types/Navigation';
 import type { MissedCall, TextBackStatus } from '../types/Models';
-
-type Nav = NativeStackNavigationProp<DashboardStackParamList, 'MissedCalls'>;
 
 const STATUS_LABELS: Record<TextBackStatus, string> = {
   sent: 'Text-back sent',
@@ -22,7 +20,6 @@ const STATUS_LABELS: Record<TextBackStatus, string> = {
 
 const MissedCallsScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const tabNavigation = useNavigation<NavigationProp<MainTabParamList>>();
   const { data: calls } = useMissedCalls();
 
@@ -81,7 +78,7 @@ const MissedCallsScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Missed Calls" onBack={() => navigation.goBack()} />
+      <AppBar title="Missed Calls" showBack />
 
       <FlatList
         data={calls}

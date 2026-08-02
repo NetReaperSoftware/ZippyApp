@@ -1,7 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
@@ -9,13 +8,9 @@ import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { initialsOf } from '../utils/format';
-import type { MoreStackParamList } from '../types/Navigation';
-
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'Profile'>;
 
 const ProfileScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { user, role, signOut } = useAuth();
 
   const name = (user?.user_metadata?.name as string | undefined) ?? 'Not signed in';
@@ -29,7 +24,7 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Profile" onBack={() => navigation.goBack()} />
+      <AppBar title="Profile" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.identity}>

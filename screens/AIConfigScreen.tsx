@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
-import type { FeatureRoutes } from '../types/Navigation';
-
-type Nav = NativeStackNavigationProp<FeatureRoutes, 'AIConfig'>;
 
 const TONES = ['Friendly', 'Professional', 'Direct'];
 
@@ -41,7 +37,6 @@ const TOGGLES = [
 
 const AIConfigScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const [tone, setTone] = useState('Friendly');
   const [greeting, setGreeting] = useState(
     "Sorry we missed your call! How can we help?",
@@ -52,7 +47,7 @@ const AIConfigScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="AI Configuration" onBack={() => navigation.goBack()} />
+      <AppBar title="AI Configuration" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[styles.label, { color: theme.textSecondary }]}>Tone of voice</Text>

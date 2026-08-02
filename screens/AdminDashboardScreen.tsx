@@ -40,7 +40,7 @@ const AdminDashboardScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Admin" onBack={() => navigation.goBack()} />
+      <AppBar title="Admin" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.grid}>

@@ -31,7 +31,7 @@ const AppointmentDetailScreen: React.FC = () => {
   if (!appointment) {
     return (
       <ScreenContainer>
-        <AppBar title="Appointment" onBack={() => navigation.goBack()} />
+        <AppBar title="Appointment" showBack />
         <Text style={[styles.empty, { color: theme.textMuted }]}>
           This appointment is no longer available.
         </Text>
@@ -69,7 +69,7 @@ const AppointmentDetailScreen: React.FC = () => {
     <ScreenContainer>
       <AppBar
         title="Appointment"
-        onBack={() => navigation.goBack()}
+        showBack
         // Two controls on the right, so both slots widen to keep the title centred.
         slotWidth={84}
         right={

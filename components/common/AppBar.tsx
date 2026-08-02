@@ -1,11 +1,19 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface AppBarProps {
   title: string;
-  /** Renders a back chevron on the left; ignored when `left` is provided. */
+  /**
+   * Renders a back chevron that pops the current stack. Preferred over passing
+   * `onBack`, because it checks `canGoBack()` first — calling `goBack()` with
+   * an empty history logs "The action 'GO_BACK' was not handled by any
+   * navigator" and does nothing.
+   */
+  showBack?: boolean;
+  /** Custom back behaviour. Overrides `showBack`; not guarded. */
   onBack?: () => void;
   left?: ReactNode;
   right?: ReactNode;
@@ -24,18 +32,28 @@ interface AppBarProps {
  */
 const AppBar: React.FC<AppBarProps> = ({
   title,
+  showBack = false,
   onBack,
   left,
   right,
   slotWidth = 44,
 }) => {
   const { theme } = useTheme();
+  const navigation = useNavigation();
+
+  const handleBack =
+    onBack ??
+    (() => {
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      }
+    });
 
   const leftContent =
     left ??
-    (onBack ? (
+    (showBack || onBack ? (
       <TouchableOpacity
-        onPress={onBack}
+        onPress={handleBack}
         accessibilityRole="button"
         accessibilityLabel="Back"
         hitSlop={8}>

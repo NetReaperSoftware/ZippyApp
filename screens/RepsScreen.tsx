@@ -21,7 +21,7 @@ const RepsScreen: React.FC = () => {
     <ScreenContainer>
       <AppBar
         title="Zippy Reps"
-        onBack={() => navigation.goBack()}
+        showBack
         right={
           <TouchableOpacity accessibilityRole="button" accessibilityLabel="Add rep" hitSlop={8}>
             <Ionicons name="add" size={26} color={theme.text} />

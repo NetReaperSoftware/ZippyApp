@@ -1,23 +1,10 @@
 import React, { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import { useTheme } from '../contexts/ThemeContext';
-import type { ZippyStackParamList } from '../types/Navigation';
-
-type Nav = NativeStackNavigationProp<ZippyStackParamList, 'ChatGPT'>;
 
 /**
  * Content-creation companion, kept separate from ZippyAssistant.
@@ -37,13 +24,12 @@ const STARTERS = [
 
 const ChatGPTScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const [type, setType] = useState(CONTENT_TYPES[0]);
   const [draft, setDraft] = useState('');
 
   return (
     <ScreenContainer>
-      <AppBar title="ChatGPT" onBack={() => navigation.goBack()} />
+      <AppBar title="ChatGPT" showBack />
 
       <KeyboardAvoidingView
         style={styles.flex}

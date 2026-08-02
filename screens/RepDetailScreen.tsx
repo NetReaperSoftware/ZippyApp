@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRoute, type RouteProp } from '@react-navigation/native';
+
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
@@ -10,12 +10,10 @@ import { useReps } from '../hooks';
 import { currency, initialsOf } from '../utils/format';
 import type { MoreStackParamList } from '../types/Navigation';
 
-type Nav = NativeStackNavigationProp<MoreStackParamList, 'RepDetail'>;
 type Route = RouteProp<MoreStackParamList, 'RepDetail'>;
 
 const RepDetailScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { params } = useRoute<Route>();
   const { data: reps } = useReps();
 
@@ -24,7 +22,7 @@ const RepDetailScreen: React.FC = () => {
   if (!rep) {
     return (
       <ScreenContainer>
-        <AppBar title="Rep" onBack={() => navigation.goBack()} />
+        <AppBar title="Rep" showBack />
         <Text style={[styles.empty, { color: theme.textMuted }]}>
           This rep is no longer available.
         </Text>
@@ -41,7 +39,7 @@ const RepDetailScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title={rep.name} onBack={() => navigation.goBack()} />
+      <AppBar title={rep.name} showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.identity}>

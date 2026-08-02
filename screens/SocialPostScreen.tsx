@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
 import { useSocialPosts } from '../hooks';
-import type { FeatureRoutes } from '../types/Navigation';
-import type { SocialPlatform } from '../types/Models';
 
-type Nav = NativeStackNavigationProp<FeatureRoutes, 'SocialPost'>;
+import type { SocialPlatform } from '../types/Models';
 
 const PLATFORMS: { key: SocialPlatform; label: string; icon: string }[] = [
   { key: 'facebook', label: 'Facebook', icon: 'logo-facebook' },
@@ -22,7 +19,6 @@ const PLATFORMS: { key: SocialPlatform; label: string; icon: string }[] = [
 
 const SocialPostScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { data: posts } = useSocialPosts();
   const [platform, setPlatform] = useState<SocialPlatform>('facebook');
   const [prompt, setPrompt] = useState('');
@@ -31,7 +27,7 @@ const SocialPostScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Social Posts" onBack={() => navigation.goBack()} />
+      <AppBar title="Social Posts" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[styles.label, { color: theme.textSecondary }]}>Platform</Text>

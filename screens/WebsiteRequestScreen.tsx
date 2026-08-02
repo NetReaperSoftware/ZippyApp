@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import ScreenContainer from '../components/common/ScreenContainer';
 import AppBar from '../components/common/AppBar';
 import PrimaryButton from '../components/common/PrimaryButton';
 import { useTheme } from '../contexts/ThemeContext';
 import { useWebsiteRequests } from '../hooks';
 import { relativeTime } from '../utils/format';
-import type { FeatureRoutes } from '../types/Navigation';
-import type { WebsiteRequest } from '../types/Models';
 
-type Nav = NativeStackNavigationProp<FeatureRoutes, 'WebsiteRequest'>;
+import type { WebsiteRequest } from '../types/Models';
 
 const STATUS_LABELS: Record<WebsiteRequest['status'], string> = {
   submitted: 'Submitted',
@@ -21,7 +18,6 @@ const STATUS_LABELS: Record<WebsiteRequest['status'], string> = {
 
 const WebsiteRequestScreen: React.FC = () => {
   const { theme } = useTheme();
-  const navigation = useNavigation<Nav>();
   const { data: requests } = useWebsiteRequests();
   const [summary, setSummary] = useState('');
   const [details, setDetails] = useState('');
@@ -35,7 +31,7 @@ const WebsiteRequestScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <AppBar title="Website Requests" onBack={() => navigation.goBack()} />
+      <AppBar title="Website Requests" showBack />
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[styles.label, { color: theme.textSecondary }]}>New request</Text>
