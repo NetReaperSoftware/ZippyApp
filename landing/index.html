@@ -460,6 +460,58 @@
         color: #6f7a72;
       }
 
+      /* ---------- how it works ---------- */
+      .steps-band {
+        border-top: 1px solid var(--line-soft);
+        background: var(--panel);
+      }
+
+      .steps {
+        list-style: none;
+        margin: 42px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 14px;
+      }
+
+      .steps li {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        border: 1px solid var(--line-soft);
+        border-radius: 16px;
+        background: var(--ink);
+        padding: 20px 22px;
+      }
+
+      .step-num {
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--green);
+        color: var(--ink);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .steps h3 {
+        margin: 4px 0 0;
+        font-size: 16.5px;
+        font-weight: 600;
+      }
+
+      .steps p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14.5px;
+        line-height: 1.6;
+        max-width: 62ch;
+      }
+
       /* ---------- founder ---------- */
       .founder {
         border-top: 1px solid var(--line-soft);
@@ -838,6 +890,67 @@
       </div>
     </section>
 
+    <section class="band steps-band" id="how">
+      <div class="wrap">
+        <span class="kicker">How it works</span>
+        <h2>A missed call becomes a booked job — on its own.</h2>
+        <p class="lede">
+          The whole recovery loop runs while you're on the tools. You only step in when
+          there's something worth your time.
+        </p>
+
+        <ol class="steps">
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <h3>The call comes in — and you can't answer</h3>
+              <p>You're up a ladder, under a sink, or already with a customer.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <h3>Zippy texts back instantly</h3>
+              <p>
+                Seconds after the missed call, they get a reply in your voice — before they
+                scroll down and call the next name on the list.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <h3>The lead lands in your inbox</h3>
+              <p>
+                Caller, time, and text-back status all in one place, alongside your SMS,
+                web chat, Messenger and Instagram conversations.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <div>
+              <h3>Zippy follows up and offers times</h3>
+              <p>
+                It answers the usual questions, proposes slots from your calendar, and keeps
+                the conversation warm until they commit.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">5</span>
+            <div>
+              <h3>You get the booking</h3>
+              <p>
+                The appointment appears on your calendar and you're notified — with the full
+                conversation already attached to the contact.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <section class="band founder" id="why">
       <div class="wrap founder-inner">
         <div>
@@ -871,7 +984,7 @@
           <li>Stay organized</li>
         </ul>
 
-        <div class="price-card" id="how">
+        <div class="price-card">
           <div class="plan">Complete System</div>
           <div class="amount">
             <span class="currency">$</span><span class="value">497</span>
