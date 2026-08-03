@@ -454,6 +454,56 @@
         max-width: 48ch;
       }
 
+      .narrate {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 20px;
+        padding: 9px 16px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+      }
+
+      .narrate:hover,
+      .narrate:focus-visible {
+        color: var(--green);
+        border-color: rgba(168, 239, 0, 0.45);
+      }
+
+      .narrate[aria-pressed='true'] {
+        background: rgba(168, 239, 0, 0.1);
+        border-color: rgba(168, 239, 0, 0.5);
+        color: var(--green);
+      }
+
+      /* Pulses only while audio is actually playing. */
+      .narrate.is-speaking .narrate-icon {
+        animation: narratePulse 1.1s ease-in-out infinite;
+      }
+
+      @keyframes narratePulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .narrate.is-speaking .narrate-icon {
+          animation: none;
+        }
+      }
+
       .showcase-hint {
         margin-top: 18px;
         font-size: 13px;
@@ -884,6 +934,18 @@
           <div class="showcase-body">
             <h3 id="showcase-title">AI Assistant</h3>
             <p id="showcase-desc">Ask Zippy to chase unread leads, summarise the calls you missed, draft a reply, or write this week’s promo — in plain English. It works from your real contacts and calendar, so answers are specific to your business rather than generic advice.</p>
+            <!-- Hidden until the script confirms speechSynthesis exists, so
+                 browsers without it never see a dead control. -->
+            <button
+              class="narrate"
+              id="narrate-toggle"
+              type="button"
+              hidden
+              aria-pressed="false">
+              <span class="narrate-icon" aria-hidden="true">🔈</span>
+              <span id="narrate-label">Read aloud</span>
+            </button>
+
             <p class="showcase-hint">Tap any feature above to see it in the app.</p>
           </div>
         </div>
@@ -1023,7 +1085,89 @@
         var desc = document.getElementById('showcase-desc');
         if (!cards.length || !shot || !title || !desc) return;
 
-        function select(card) {
+        // ---- narration -------------------------------------------------
+        // Reads the live description text, so it can never drift from the copy.
+        var synth = window.speechSynthesis;
+        var toggle = document.getElementById('narrate-toggle');
+        var toggleLabel = document.getElementById('narrate-label');
+        var STORAGE_KEY = 'myzippy:narrate';
+        var narrateOn = false;
+
+        function stopSpeaking() {
+          if (synth) synth.cancel();
+          if (toggle) toggle.classList.remove('is-speaking');
+        }
+
+        function speak(text) {
+          if (!synth || !narrateOn || !text) return;
+          // Always clear the queue first: without this, clicking through
+          // features stacks utterances and they play back-to-back.
+          synth.cancel();
+
+          var utter = new SpeechSynthesisUtterance(text);
+          utter.rate = 1;
+          utter.pitch = 1;
+          var voices = synth.getVoices();
+          var preferred = voices.filter(function (v) {
+            return /^en(-|_|$)/i.test(v.lang);
+          })[0];
+          if (preferred) utter.voice = preferred;
+
+          utter.onstart = function () {
+            toggle.classList.add('is-speaking');
+          };
+          utter.onend = utter.onerror = function () {
+            toggle.classList.remove('is-speaking');
+          };
+
+          synth.speak(utter);
+        }
+
+        function setNarrate(on, andSpeak) {
+          narrateOn = on;
+          toggle.setAttribute('aria-pressed', String(on));
+          toggleLabel.textContent = on ? 'Stop reading' : 'Read aloud';
+          toggle.querySelector('.narrate-icon').textContent = on ? '🔊' : '🔈';
+          try {
+            localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
+          } catch (e) {
+            /* private mode — preference just won't persist */
+          }
+          if (on && andSpeak) {
+            speak(desc.textContent);
+          } else if (!on) {
+            stopSpeaking();
+          }
+        }
+
+        if (synth && toggle) {
+          toggle.hidden = false;
+          try {
+            narrateOn = localStorage.getItem(STORAGE_KEY) === '1';
+          } catch (e) {
+            narrateOn = false;
+          }
+          // Restore the saved state without speaking — audio must never start
+          // without a user gesture on this page load.
+          setNarrate(narrateOn, false);
+
+          toggle.addEventListener('click', function () {
+            // speak() runs synchronously inside the handler, which iOS Safari
+            // requires; deferring it past an await silently does nothing.
+            setNarrate(!narrateOn, true);
+          });
+
+          // Chrome populates voices asynchronously.
+          if (typeof synth.onvoiceschanged !== 'undefined') {
+            synth.onvoiceschanged = function () {
+              synth.getVoices();
+            };
+          }
+
+          window.addEventListener('beforeunload', stopSpeaking);
+        }
+
+        function select(card, fromClick) {
           cards.forEach(function (c) {
             var active = c === card;
             c.classList.toggle('is-active', active);
@@ -1033,12 +1177,18 @@
           shot.alt = card.dataset.title + ' screen in the MyZippy app';
           title.textContent = card.dataset.title;
           desc.textContent = card.dataset.desc;
+
+          if (fromClick) {
+            speak(card.dataset.desc);
+          } else {
+            stopSpeaking();
+          }
         }
 
         cards.forEach(function (card) {
           card.setAttribute('aria-pressed', 'false');
           card.addEventListener('click', function () {
-            select(card);
+            select(card, true);
             // Only pull the showcase into view when it isn't already visible,
             // so clicking through features on desktop doesn't yank the page.
             var box = shot.getBoundingClientRect();
@@ -1048,7 +1198,8 @@
           });
         });
 
-        select(cards[0]);
+        // Initial paint only — no gesture, so no audio.
+        select(cards[0], false);
 
         // Warm the remaining screenshots so switching feels instant.
         window.addEventListener('load', function () {
