@@ -19,18 +19,66 @@
         height: 100%;
         overflow: hidden;
       }
+      /* The demo bar and the app stack vertically and share the viewport. */
+      body {
+        display: flex;
+        flex-direction: column;
+      }
       /* react-native-web maps flex containers onto these; without a full-height
-         root the app collapses to zero height. */
+         root the app collapses to zero height. `min-height: 0` keeps the app
+         from overflowing past the bar instead of shrinking to fit beside it. */
       #root {
         display: flex;
-        height: 100%;
+        flex: 1;
+        min-height: 0;
       }
       #root > * {
         flex: 1;
       }
+
+      /* ---------- TEMPORARY: exit link back to the marketing site ----------
+         Sits above the app rather than floating over it — the app owns both the
+         top-left (AppBar back chevron) and the bottom (tab bar), so an overlay
+         would cover a real control. Delete this block, the <a> in <body>, and
+         the `body { display: flex }` rule to remove it. */
+      .demo-exit {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-sizing: border-box;
+        padding: 10px 16px;
+        padding-top: calc(10px + env(safe-area-inset-top));
+        background: #050705;
+        border-bottom: 1px solid rgba(168, 239, 0, 0.14);
+        color: #a8ef00;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+      }
+      .demo-exit:hover {
+        color: #eef2ec;
+      }
+      .demo-exit span[aria-hidden] {
+        font-size: 16px;
+      }
+      .demo-exit em {
+        margin-left: auto;
+        color: #6f7a72;
+        font-style: normal;
+        font-weight: 500;
+      }
     </style>
   </head>
   <body>
+    <!-- TEMPORARY: see .demo-exit above. -->
+    <a class="demo-exit" href="/landing/">
+      <span aria-hidden="true">&#8592;</span>
+      Back to myzippy.app
+      <em>Interactive demo</em>
+    </a>
     <div id="root"></div>
     <script type="module" src="/index.web.tsx"></script>
   </body>

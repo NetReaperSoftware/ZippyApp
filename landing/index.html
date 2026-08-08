@@ -42,6 +42,9 @@
 
       html {
         scroll-behavior: smooth;
+        /* Reserves the scrollbar gutter permanently, so locking the background
+           while the feature modal is open can't shift the page sideways. */
+        scrollbar-gutter: stable;
       }
 
       body {
@@ -401,12 +404,145 @@
         line-height: 1.55;
       }
 
-      /* ---------- feature showcase ---------- */
-      .card.is-active {
-        border-color: rgba(168, 239, 0, 0.55);
-        background: rgba(168, 239, 0, 0.06);
+      /* ---------- feature modal ---------- */
+      /* A native <dialog> so the browser supplies the top layer, the focus
+         trap, Esc-to-close and focus restoration to the card that opened it. */
+      /* Deliberately no `position` here: the UA sets `dialog:modal` to
+         `position: fixed; inset: 0; margin: auto`, which is what pins the modal
+         to the centre of the current viewport. Overriding it drops the dialog
+         back into document flow at the end of <body> and the page jumps.
+         `position: fixed` also makes this the containing block for .fm-close. */
+      .fm {
+        width: min(920px, calc(100vw - 32px));
+        max-height: min(92vh, 900px);
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: var(--panel);
+        color: #eef2ec;
+        /* The dialog itself never scrolls — .fm-inner does. That keeps the
+           absolutely positioned close button pinned instead of scrolling away
+           on a short viewport. */
+        overflow: hidden;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.75), 0 0 60px rgba(168, 239, 0, 0.07);
       }
 
+      .fm::backdrop {
+        background: rgba(5, 7, 5, 0.8);
+        backdrop-filter: blur(6px);
+      }
+
+      /* Only animate the open transition; `display` is toggled by the browser,
+         so a plain transition would never run. */
+      @media (prefers-reduced-motion: no-preference) {
+        .fm[open] {
+          animation: fmIn 0.22s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+        .fm[open]::backdrop {
+          animation: fmFade 0.22s ease;
+        }
+      }
+
+      @keyframes fmIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.985);
+        }
+      }
+
+      @keyframes fmFade {
+        from {
+          opacity: 0;
+        }
+      }
+
+      .fm-inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 26px;
+        align-items: center;
+        justify-items: center;
+        /* Top padding clears the close button, which floats over this box. */
+        padding: 62px 26px 34px;
+        max-height: min(92vh, 900px);
+        overflow: auto;
+        overscroll-behavior: contain;
+        text-align: center;
+      }
+
+      @media (min-width: 800px) {
+        .fm-inner {
+          grid-template-columns: auto 1fr;
+          gap: 44px;
+          /* Right padding keeps the title from running under the close button. */
+          padding: 40px 62px 40px 44px;
+          text-align: left;
+          justify-items: start;
+        }
+      }
+
+      /* Sized by height so the phone shot never overruns a short viewport;
+         aspect-ratio derives the width, keeping the screenshot undistorted. */
+      .fm-shot {
+        height: min(583px, 58vh);
+        width: auto;
+        max-width: 100%;
+        aspect-ratio: 620 / 1348;
+        border-radius: 30px;
+        border: 1px solid var(--line-soft);
+        background: var(--ink);
+        object-fit: cover;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(168, 239, 0, 0.08);
+      }
+
+      .fm-body h3 {
+        margin: 0;
+        font-size: clamp(20px, 3vw, 27px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .fm-body p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 15.5px;
+        line-height: 1.65;
+        max-width: 48ch;
+      }
+
+      .fm-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        border: 1px solid var(--line-soft);
+        border-radius: 50%;
+        background: rgba(5, 7, 5, 0.7);
+        color: var(--nav);
+        font: 400 20px/1 'Geist', system-ui, sans-serif;
+        cursor: pointer;
+        transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      }
+
+      .fm-close:hover,
+      .fm-close:focus-visible {
+        color: var(--green);
+        border-color: rgba(168, 239, 0, 0.45);
+        background: rgba(168, 239, 0, 0.1);
+      }
+
+      /* Background must not scroll behind the open modal. */
+      html.fm-open,
+      html.fm-open body {
+        overflow: hidden;
+      }
+
+      /* ---------- no-JS feature fallback ---------- */
       .showcase {
         display: grid;
         grid-template-columns: 1fr;
@@ -428,7 +564,6 @@
         }
       }
 
-      /* Fixed height stops the section jumping as screenshots swap. */
       .shot {
         width: 268px;
         height: 583px;
@@ -505,7 +640,8 @@
       }
 
       .showcase-hint {
-        margin-top: 18px;
+        margin-top: 22px;
+        text-align: center;
         font-size: 13px;
         color: #6f7a72;
       }
@@ -817,7 +953,7 @@
             data-shot="/screenshots/AiAssistantScreen.webp"
             data-title="AI Assistant"
             data-desc="Ask Zippy to chase unread leads, summarise the calls you missed, draft a reply, or write this week’s promo — in plain English. It works from your real contacts and calendar, so answers are specific to your business rather than generic advice."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">✦</div>
             <h3>AI Assistant</h3>
             <p>Smart AI tools that help grow and manage your business.</p>
@@ -829,7 +965,7 @@
             data-shot="/screenshots/ChatGPTScreen.webp"
             data-title="ChatGPT"
             data-desc="Pick what you’re making — a social post, a follow-up email, a service description, a review reply — and get copy written in your voice. Start from a suggested prompt or type your own when you already know what you want to say."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">◎</div>
             <h3>ChatGPT</h3>
             <p>AI-powered content creation, ideas and business support.</p>
@@ -841,7 +977,7 @@
             data-shot="/screenshots/AiTextBackScreen.webp"
             data-title="AI Text Back"
             data-desc="Every missed call gets an instant text so the lead never goes cold. See who called, whether the text-back landed, and who replied — then jump straight into the conversation without leaving the screen."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">↗</div>
             <h3>AI Text Back</h3>
             <p>Instant automated texting for missed calls and new leads.</p>
@@ -853,7 +989,7 @@
             data-shot="/screenshots/CalenderScreen.webp"
             data-title="Appointments"
             data-desc="Switch between a month grid and a running list. Tap any day to see exactly what’s booked, with confirmed and pending jobs colour-coded at a glance, then open a booking for the full details."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">▣</div>
             <h3>Appointments</h3>
             <p>Simple booking, scheduling and customer reminders.</p>
@@ -865,7 +1001,7 @@
             data-shot="/screenshots/SocialPostsScreen.webp"
             data-title="Social Hub"
             data-desc="Choose Facebook, Instagram, LinkedIn or your Google Business Profile, describe the promo in a line, and get a ready-to-publish post back. Copy it out or export it — no switching between four apps to stay visible."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">◌</div>
             <h3>Social Hub</h3>
             <p>Connect, manage and post across your social platforms.</p>
@@ -877,7 +1013,7 @@
             data-shot="/screenshots/ContactsScreen.webp"
             data-title="Contacts"
             data-desc="Every lead and customer in one searchable list, grouped alphabetically and filterable by stage — new, contacted, booked, won or lost. Open anyone to see how they found you, what they’re worth, and message them directly."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">☰</div>
             <h3>Contacts</h3>
             <p>Customer profiles, lead tracking and conversation history.</p>
@@ -889,7 +1025,7 @@
             data-shot="/screenshots/WebsiteScreen.webp"
             data-title="AI Website"
             data-desc="Need the hours changed or new job photos added? Send the request from your phone and track it through submitted, in progress and complete — no email chains, no waiting on a web developer to call you back."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">⌂</div>
             <h3>AI Website</h3>
             <p>An AI-enhanced website designed to attract and convert.</p>
@@ -901,7 +1037,7 @@
             data-shot="/screenshots/BroadcastsScreen.webp"
             data-title="Broadcasts"
             data-desc="Pick a channel, choose who hears it — everyone, new leads, or past clients — and send. Useful for seasonal reminders, holiday hours, or filling a gap in next week’s schedule."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">✉</div>
             <h3>Broadcasts</h3>
             <p>Send SMS, email and voice messages to your contacts.</p>
@@ -913,42 +1049,34 @@
             data-shot="/screenshots/AiConfigScreen.webp"
             data-title="AI Configuration"
             data-desc="Set the tone Zippy uses, edit the exact missed-call greeting customers receive, and decide how far it goes on its own — whether it offers booking, replies only after hours, and when it should hand over to you."
-            aria-controls="showcase">
+            aria-haspopup="dialog">
             <div class="icon" aria-hidden="true">⚙</div>
             <h3>AI Configuration</h3>
             <p>Control Zippy’s tone, language and automated behavior.</p>
           </button>
         </div>
 
-        <div class="showcase" id="showcase" aria-live="polite">
-          <img
-            class="shot"
-            id="showcase-shot"
-            src="/screenshots/AiAssistantScreen.webp"
-            width="620"
-            height="1348"
-            alt="AI Assistant screen in the MyZippy app"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="showcase-body">
-            <h3 id="showcase-title">AI Assistant</h3>
-            <p id="showcase-desc">Ask Zippy to chase unread leads, summarise the calls you missed, draft a reply, or write this week’s promo — in plain English. It works from your real contacts and calendar, so answers are specific to your business rather than generic advice.</p>
-            <!-- Hidden until the script confirms speechSynthesis exists, so
-                 browsers without it never see a dead control. -->
-            <button
-              class="narrate"
-              id="narrate-toggle"
-              type="button"
-              hidden
-              aria-pressed="false">
-              <span class="narrate-icon" aria-hidden="true">🔈</span>
-              <span id="narrate-label">Read aloud</span>
-            </button>
+        <p class="showcase-hint">Tap any feature to see it in the app.</p>
 
-            <p class="showcase-hint">Tap any feature above to see it in the app.</p>
+        <!-- The cards are buttons driven entirely by script, so without JS the
+             section would have nothing to show. Render the first feature inline
+             for that case. -->
+        <noscript>
+          <div class="showcase">
+            <img
+              class="shot"
+              src="/screenshots/AiAssistantScreen.webp"
+              width="620"
+              height="1348"
+              alt="AI Assistant screen in the MyZippy app"
+              decoding="async"
+            />
+            <div class="showcase-body">
+              <h3>AI Assistant</h3>
+              <p>Ask Zippy to chase unread leads, summarise the calls you missed, draft a reply, or write this week’s promo — in plain English. It works from your real contacts and calendar, so answers are specific to your business rather than generic advice.</p>
+            </div>
           </div>
-        </div>
+        </noscript>
       </div>
     </section>
 
@@ -1074,16 +1202,47 @@
       </div>
     </footer>
 
+    <!-- Populated from the clicked card's data-* attributes. Lives at the end
+         of <body> because a modal dialog renders in the browser's top layer,
+         above the sticky nav, regardless of where it sits in the document. -->
+    <dialog class="fm" id="feature-modal" aria-labelledby="fm-title">
+      <button class="fm-close" id="fm-close" type="button" aria-label="Close">
+        <span aria-hidden="true">&#10005;</span>
+      </button>
+      <div class="fm-inner">
+        <img
+          class="fm-shot"
+          id="fm-shot"
+          width="620"
+          height="1348"
+          alt=""
+          decoding="async"
+        />
+        <div class="fm-body">
+          <h3 id="fm-title"></h3>
+          <p id="fm-desc"></p>
+          <!-- Hidden until the script confirms speechSynthesis exists, so
+               browsers without it never see a dead control. -->
+          <button class="narrate" id="narrate-toggle" type="button" hidden aria-pressed="false">
+            <span class="narrate-icon" aria-hidden="true">🔈</span>
+            <span id="narrate-label">Read aloud</span>
+          </button>
+        </div>
+      </div>
+    </dialog>
+
     <script>
-      // Swaps the showcase screenshot and copy when a feature card is chosen.
-      // The first feature is already rendered server-side, so with JS disabled
-      // the section still shows a real screenshot and description.
+      // Opens a modal over the page with the chosen feature's screenshot and
+      // copy. A <noscript> block renders the first feature inline, so with JS
+      // disabled the section still shows a real screenshot and description.
       (function () {
         var cards = document.querySelectorAll('.card[data-shot]');
-        var shot = document.getElementById('showcase-shot');
-        var title = document.getElementById('showcase-title');
-        var desc = document.getElementById('showcase-desc');
-        if (!cards.length || !shot || !title || !desc) return;
+        var modal = document.getElementById('feature-modal');
+        var shot = document.getElementById('fm-shot');
+        var title = document.getElementById('fm-title');
+        var desc = document.getElementById('fm-desc');
+        var closeBtn = document.getElementById('fm-close');
+        if (!cards.length || !modal || !shot || !title || !desc || !closeBtn) return;
 
         // ---- narration -------------------------------------------------
         // Reads the live description text, so it can never drift from the copy.
@@ -1100,9 +1259,13 @@
 
         function speak(text) {
           if (!synth || !narrateOn || !text) return;
-          // Always clear the queue first: without this, clicking through
-          // features stacks utterances and they play back-to-back.
-          synth.cancel();
+          // Clear the queue first, or clicking through features stacks
+          // utterances and they play back-to-back. Guarded because a cancel()
+          // immediately followed by speak() in the same tick can leave WebKit
+          // silent — so skip it when there is nothing to cancel, which is the
+          // common case of opening the modal while idle. Deferring speak()
+          // instead is not an option: iOS drops it once it leaves the gesture.
+          if (synth.speaking || synth.pending) synth.cancel();
 
           var utter = new SpeechSynthesisUtterance(text);
           utter.rate = 1;
@@ -1167,39 +1330,51 @@
           window.addEventListener('beforeunload', stopSpeaking);
         }
 
-        function select(card, fromClick) {
-          cards.forEach(function (c) {
-            var active = c === card;
-            c.classList.toggle('is-active', active);
-            c.setAttribute('aria-pressed', String(active));
-          });
+        // ---- modal -------------------------------------------------------
+        function openFeature(card) {
           shot.src = card.dataset.shot;
           shot.alt = card.dataset.title + ' screen in the MyZippy app';
           title.textContent = card.dataset.title;
           desc.textContent = card.dataset.desc;
 
-          if (fromClick) {
-            speak(card.dataset.desc);
-          } else {
-            stopSpeaking();
+          // showModal() gives the top layer, a focus trap, Esc-to-close and
+          // focus restored to this card on close. Guard it: calling it on an
+          // already-open dialog throws.
+          if (!modal.open) {
+            document.documentElement.classList.add('fm-open');
+            modal.showModal();
           }
+          // .fm-inner is the scroller, not the dialog — reset it so a second
+          // open doesn't inherit the last one's scroll position.
+          var scroller = modal.querySelector('.fm-inner');
+          if (scroller) scroller.scrollTop = 0;
+
+          // speak() must run in the same task as the click for iOS Safari.
+          speak(card.dataset.desc);
         }
 
         cards.forEach(function (card) {
-          card.setAttribute('aria-pressed', 'false');
           card.addEventListener('click', function () {
-            select(card, true);
-            // Only pull the showcase into view when it isn't already visible,
-            // so clicking through features on desktop doesn't yank the page.
-            var box = shot.getBoundingClientRect();
-            if (box.top < 0 || box.bottom > window.innerHeight) {
-              shot.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            openFeature(card);
           });
         });
 
-        // Initial paint only — no gesture, so no audio.
-        select(cards[0], false);
+        closeBtn.addEventListener('click', function () {
+          modal.close();
+        });
+
+        // Clicking the backdrop lands on the <dialog> itself — everything
+        // visible belongs to .fm-inner or the close button.
+        modal.addEventListener('click', function (event) {
+          if (event.target === modal) modal.close();
+        });
+
+        // Fires for the close button, the backdrop and Esc alike, so scroll
+        // release and audio cleanup only need handling here.
+        modal.addEventListener('close', function () {
+          document.documentElement.classList.remove('fm-open');
+          stopSpeaking();
+        });
 
         // Warm the remaining screenshots so switching feels instant.
         window.addEventListener('load', function () {
